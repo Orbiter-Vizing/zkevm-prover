@@ -37,9 +37,11 @@ Steps to compile `zkevm-prover` locally:
 ### Clone repository
 
 ```sh
-git clone -b stable-v3.0.2 --recursive https://github.com/UrsaMajor-t/zkevm-prover.git
+git clone -b stable-v3.0.2 --recursive https://github.com/Orbiter-Vizing/zkevm-prover.git
 cd zkevm-prover
 ```
+
+> **Please ensure that the following scripts are run from the root directory of the zkevm-prover repository.**
 
 ### Deployment Project
 
@@ -53,7 +55,7 @@ This step involves configuring the necessary dependencies, which is currently on
 - If you encounter an error during the deployment process, similar to fatal error: opening dependency file xxx: No such file or directory, you can attempt to resolve the issue by re-executing the command.
 
 ### Run zkEVM Prover
-_Please ensure that you run this script from the root of the zkevm-prover repository._
+
 ```sh
 ./tools/run_zkevm_prover.sh monitor
 ```
