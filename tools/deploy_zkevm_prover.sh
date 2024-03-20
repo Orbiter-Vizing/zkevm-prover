@@ -9,17 +9,16 @@ ARCHIVE_NAME="v3.0.0-RC3-fork.6"
 ARCHIVE_EXTENSION=".tgz"
 ARCHIVE_URL="https://zkproverc.s3.ap-northeast-1.amazonaws.com/${ARCHIVE_NAME}${ARCHIVE_EXTENSION}"
 
-if [ -f ${ARCHIVE_NAME}${ARCHIVE_EXTENSION} ]; then
-	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} already exists"
-else
-	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} does not exist, start downloading now"
-	wget ${ARCHIVE_URL}
-fi
-
 if [ -d ${ARCHIVE_NAME} ]; then
 	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} uncompressed"
 else
 	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} does not uncompressed, start decompressing now"
+	if [ -f ${ARCHIVE_NAME}${ARCHIVE_EXTENSION} ]; then
+  	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} already exists"
+  else
+  	echo "${ARCHIVE_NAME}${ARCHIVE_EXTENSION} does not exist, start downloading now"
+  	wget ${ARCHIVE_URL}
+  fi
 	tar -xzvf ${ARCHIVE_NAME}${ARCHIVE_EXTENSION}
 fi
 

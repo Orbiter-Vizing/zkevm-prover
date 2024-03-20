@@ -1,5 +1,5 @@
 #!/bin/sh
-RUN_TASK="build/zkProver -c config/config_prover_develop.json"
+RUN_TASK="build/zkProver -c config/config_prover.json"
 if [ "$1" = "monitor" ]; then
 	PREFIX="*/1 * * * * "
 	PREFIX_1="\*/1 \* \* \* \* "

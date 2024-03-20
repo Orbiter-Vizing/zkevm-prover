@@ -50,6 +50,8 @@ This step involves configuring the necessary dependencies, which is currently on
 ./tools/deploy_zkevm_prover.sh
 ```
 
+- If you encounter an error during the deployment process, similar to fatal error: opening dependency file xxx: No such file or directory, you can attempt to resolve the issue by re-executing the command.
+
 ### Run zkEVM Prover
 _Please ensure that you run this script from the root of the zkevm-prover repository._
 ```sh
