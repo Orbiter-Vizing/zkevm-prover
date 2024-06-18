@@ -8,6 +8,7 @@
 
     "runAggregatorServer": false,
     "runAggregatorClient": true,
+    "proverName": "orbiter-prover-develop",
 
     "runFileGenBatchProof": false,
     "runFileGenAggregatedProof": false,
@@ -36,13 +37,13 @@
     "saveProofToFile": true,
     "saveResponseToFile": true,
     "saveFilesInSubfolders": false,
-    
+
     "loadDBToMemCache": true,
     "loadDBToMemCacheInParallel": false,
     "loadDBToMemTimeout": 30000000,
     "dbMTCacheSize": 16384,
     "dbProgramCacheSize": 16384,
-    
+
     "opcodeTracer": false,
     "logRemoteDbReads": false,
     "logExecutorServerInput": false,
@@ -63,7 +64,7 @@
 
     "aggregatorServerPort": 50081,
     "aggregatorClientPort": 50081,
-    "aggregatorClientHost": "127.0.0.1",
+    "aggregatorClientHost": "172.31.4.85",//Need to modify the place
     "aggregatorClientMockTimeout": 10000000,
     "aggregatorClientWatchdogTimeout": 60000000,
 
@@ -87,22 +88,21 @@
     "publicsOutput": "public.json",
     "proofFile": "proof.json",
 
-    "databaseURL": "local",
+    "databaseURL": "postgresql://prover_user:prover_pass@172.31.4.85:5432/prover_db",//Need to modify the place
     "databaseURL_disabled": "postgresql://statedb:statedb@127.0.0.1:5432/testdb",
     "dbNodesTableName": "state.nodes",
     "dbProgramTableName": "state.program",
     "dbMultiWrite": true,
-    "dbConnectionsPool": false,
-    "dbNumberOfPoolConnections": 25,
-    "dbMetrics": false,
-    "dbClearCache": false,
-    "dbGetTree": false,
-    "dbReadRetryDelay": 100000,
+    "dbNumberOfPoolConnections": 30,
+    "dbGetTree": true,
     "cleanerPollingPeriod": 600,
     "requestsPersistence": 3600,
     "maxExecutorThreads": 20,
     "maxProverThreads": 8,
-    "maxStateDBThreads": 8,
+    "maxHashDBThreads": 8,
+    "ECRecoverPrecalc": true,
+    "ECRecoverPrecalcNThreads": 4,
+    "useAssociativeCache": true,
 
     "fullTracerTraceReserveSize": 262144
 }

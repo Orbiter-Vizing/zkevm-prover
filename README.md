@@ -37,106 +37,32 @@ Steps to compile `zkevm-prover` locally:
 ### Clone repository
 
 ```sh
-git clone --recursive https://github.com/0xPolygonHermez/zkevm-prover.git
+git clone -b stable-v6.0.0 --recursive https://github.com/Orbiter-Vizing/zkevm-prover.git
 cd zkevm-prover
 ```
 
-### Download necessary files
+> **Please ensure that the following scripts are run from the root directory of the zkevm-prover repository.**
 
-Download this **very large archive (~75GB)**. It's a good idea to start this download now and have it running in the background:
+### Deployment Project
 
-```sh
-./tools/download_archive.sh
-```
+The setup involves configuring dependencies on **Ubuntu** and downloading large configuration files (~62GB). After extraction, these files will occupy around 86GB. Ensure at least 200GB of disk space for smooth operation. Following this, the project will be compiled.
 
-The archive will take up an additional 115GB of space once extracted.
-
-### Install dependencies
-
-The following packages must be installed.
-
-**Important dependency note**: you must install [`libpqxx` version 6.4.5](https://github.com/jtv/libpqxx/releases/tag/6.4.5). If your distribution installs a newer version, please [compile `libpqxx` 6.4.5](https://github.com/jtv/libpqxx/releases/tag/6.4.5) and install it manually instead.
-
-#### Ubuntu/Debian
 
 ```sh
-apt update
-apt install build-essential libbenchmark-dev libomp-dev libgmp-dev nlohmann-json3-dev postgresql libpqxx-dev libpqxx-doc nasm libsecp256k1-dev grpc-proto libsodium-dev libprotobuf-dev libssl-dev cmake libgrpc++-dev protobuf-compiler protobuf-compiler-grpc uuid-dev
+./tools/deploy_zkevm_prover.sh
 ```
 
-#### openSUSE
-```sh
-zypper addrepo https://download.opensuse.org/repositories/network:cryptocurrencies/openSUSE_Tumbleweed/network:cryptocurrencies.repo
-zypper refresh
-zypper install -t pattern devel_basis
-zypper install libbenchmark1 libomp16-devel libgmp10 nlohmann_json-devel postgresql libpqxx-devel ghc-postgresql-libpq-devel nasm libsecp256k1-devel grpc-devel libsodium-devel libprotobuf-c-devel libssl53 cmake libgrpc++1_57 protobuf-devel uuid-devel llvm llvm-devel libopenssl-devel
-```
+- If you encounter an error during the deployment process, similar to fatal error: opening dependency file xxx: No such file or directory, you can attempt to resolve the issue by re-executing the command.
 
-#### Fedora
-```
-dnf group install "C Development Tools and Libraries" "Development Tools"
-dnf config-manager --add-repo https://terra.fyralabs.com/terra.repo
-dnf install google-benchmark-devel libomp-devel gmp gmp-devel gmp-c++ nlohmann-json-devel postgresql libpqxx-devel nasm libsecp256k1-devel grpc-devel libsodium-devel cmake grpc grpc-devel grpc-cpp protobuf-devel protobuf-c-devel uuid-devel libuuid-devel uuid-c++ llvm llvm-devel openssl-devel 
-```
-
-#### Arch
-```sh
-pacman -S base-devel extra/protobuf community/grpc-cli community/nlohmann-json extra/libpqxx nasm extra/libsodium community/libsecp256k1
-```
-
-### Compilation
-
-You may first need to recompile the protobufs:
-```sh
-cd src/grpc
-make
-cd ../..
-```
-
-Run `make` to compile the main project:
+### Run zkEVM Prover
 
 ```sh
-make clean
-make generate
-make -j
+./tools/run_zkevm_prover.sh monitor
 ```
-
-To compile in debug mode, run `make -j dbg=1`.
+**monitor**: It will conduct a check every minute to determine if the prover process has exited abnormally. If an abnormal exit is detected, the prover process will be restarted
 
 ### Test vectors
 
 ```sh
-./build/zkProver -c testvectors/config_runFile_BatchProof.json
+./build/zkProver -c config/test_batch_proof.json
 ```
-
-## HashDB service database
-
-To use persistence in the HashDB (Merkle-tree) service you must create the database objects needed by the service. To do this run the shell script:
-
-```sh
-./tools/statedb/create_db.sh <database> <user> <password>
-```
-
-For example:
-
-```sh
-./tools/statedb/create_db.sh testdb statedb statedb
-```
-
-## Docker
-
-```sh
-sudo docker build -t zkprover .
-sudo docker run --rm --network host -ti -p 50051:50051 -p 50061:50061 -p 50071:50071 -v $PWD/testvectors:/usr/src/app zkprover input_executor.json
-```
-
-## Usage
-
-To run the Prover, supply a `config.json` file containing the parameters that help customize various Prover settings. By default, the Prover accesses the file `config/config.json`.  You can specify a different config file location using the '-c <file>' argument.  In order to know about the different available configuration parameters, please read the src/config/README.md file.
-
-To execute a proof test:
-
-1. Modify the `config.json` file, setting the `"runFileGenProof"` parameter to `"true"`. Ensure all other parameters are set to `"false"`. If you prefer not to use a PostgreSQL database for the test, adjust the `"databaseURL"` to `"local"`.
-2. For the `"inputFile"` parameter, specify the desired input test data file. As an example, use the file `testvectors/batchProof/input_executor_0.json`.
-3. Launch the Prover from the project root directory using the command: `build/zkProver`.
-4. The proof's result files will be saved in the directory defined by the `"outputPath"` configuration parameter.
