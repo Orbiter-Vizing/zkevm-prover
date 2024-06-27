@@ -639,7 +639,7 @@ zkresult Database::readTreeRemote(const string &key, bool *keys, uint64_t level,
     {
         // Prepare the query
         // string query = "SELECT get_tree (E\'\\\\x" + key + "\', E\'\\\\x" + rkey + "\');";
-        string query = "SELECT state.get_tree(E'\\\\x" + key + "'::bytea, E'\\\\x" + rkey + "'::bytea);";
+        string query = "SELECT get_tree(E'\\\\x" + key + "'::bytea, E'\\\\x" + rkey + "'::bytea);";
         zklog.info("get_tree Query: " + query);
         // zklog.info("Key: " + key + ", RKey: " + rkey);
 
