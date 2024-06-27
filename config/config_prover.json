@@ -30,13 +30,13 @@
     "executeInParallel": true,
     "useMainExecGenerated": true,
 
-    "saveRequestToFile": true,
-    "saveInputToFile": true,
-    "saveDbReadsToFile": true,
+    "saveRequestToFile": false,
+    "saveInputToFile": false,
+    "saveDbReadsToFile": false,
     "saveDbReadsToFileOnChange": false,
-    "saveOutputToFile": true,
-    "saveProofToFile": true,
-    "saveResponseToFile": true,
+    "saveOutputToFile": false,
+    "saveProofToFile": false,
+    "saveResponseToFile": false,
     "saveFilesInSubfolders": false,
     
     "loadDBToMemCache": true,
@@ -67,7 +67,7 @@
     "aggregatorClientPort": 50081,
     "aggregatorClientHost": "172.31.4.85",//Need to modify the place
     "aggregatorClientMockTimeout": 10000000,
-    "aggregatorClientWatchdogTimeout": 60000000,
+    "aggregatorClientWatchdogTimeout": 300000000,
 
     "mapConstPolsFile": false,
     "mapConstantsTreeFile": false,
