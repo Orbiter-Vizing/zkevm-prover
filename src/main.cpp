@@ -286,7 +286,6 @@ void runFileExecute(Goldilocks fr, Prover &prover, Config &config)
 
 int main(int argc, char **argv)
 {
-    std::cout << "<------tetst 写入失败，错误原因：------->" << strerror(errno) << std::endl;
     /* CONFIG */
     if (argc == 2)
     {
