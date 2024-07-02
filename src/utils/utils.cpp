@@ -248,7 +248,6 @@ void file2json(const string &fileName, json &j)
         } else {
             std::cout << "error#2:未知的流错误:" << strerror(errno) << std::endl;
         }
-        zklog.error("json2file() failed creating output JSON file " + fileName);
         zklog.error("file2json() failed loading input JSON file " + fileName + "; does this file exist?");
         exitProcess();
     }
@@ -280,7 +279,6 @@ void file2json(const string &fileName, ordered_json &j)
         } else {
             std::cout << "error#3:未知的流错误:" << strerror(errno) << std::endl;
         }
-        zklog.error("json2file() failed creating output JSON file " + fileName);
         zklog.error("file2json() failed loading input JSON file " + fileName);
         exitProcess();
     }
