@@ -214,6 +214,17 @@ void json2file(const json &j, const string &fileName)
     ofstream outputStream(fileName);
     if (!outputStream.good())
     {
+        std::cout << "error#1:错误原因:" << strerror(errno) << std::endl;
+        std::ios::iostate state = outputStream.rdstate();
+        if (state & std::ios::badbit) {
+            std::cout << "error#1:严重的流错误" << std::endl;
+        } else if (state & std::ios::failbit) {
+            std::cout << "error#1:写入流失败" << std::endl;
+        } else if (state & std::ios::eofbit) {
+            std::cout << "error#1:达到文件结尾" << std::endl;
+        } else {
+            std::cout << "error#1:未知的流错误:" << strerror(errno) << std::endl;
+        }
         zklog.error("json2file() failed creating output JSON file " + fileName);
         exitProcess();
     }
@@ -226,6 +237,17 @@ void file2json(const string &fileName, json &j)
     std::ifstream inputStream(fileName);
     if (!inputStream.good())
     {
+        std::cout << "error#2:错误原因:" << strerror(errno) << std::endl;
+        std::ios::iostate state = inputStream.rdstate();
+        if (state & std::ios::badbit) {
+            std::cout << "error#2:严重的流错误" << std::endl;
+        } else if (state & std::ios::failbit) {
+            std::cout << "error#2:写入流失败" << std::endl;
+        } else if (state & std::ios::eofbit) {
+            std::cout << "error#2:达到文件结尾" << std::endl;
+        } else {
+            std::cout << "error#2:未知的流错误:" << strerror(errno) << std::endl;
+        }
         zklog.error("file2json() failed loading input JSON file " + fileName + "; does this file exist?");
         exitProcess();
     }
@@ -246,6 +268,17 @@ void file2json(const string &fileName, ordered_json &j)
     std::ifstream inputStream(fileName);
     if (!inputStream.good())
     {
+        std::cout << "error#3:错误原因:" << strerror(errno) << std::endl;
+        std::ios::iostate state = inputStream.rdstate();
+        if (state & std::ios::badbit) {
+            std::cout << "error#3:严重的流错误" << std::endl;
+        } else if (state & std::ios::failbit) {
+            std::cout << "error#3:写入流失败" << std::endl;
+        } else if (state & std::ios::eofbit) {
+            std::cout << "error#3:达到文件结尾" << std::endl;
+        } else {
+            std::cout << "error#3:未知的流错误:" << strerror(errno) << std::endl;
+        }
         zklog.error("file2json() failed loading input JSON file " + fileName);
         exitProcess();
     }

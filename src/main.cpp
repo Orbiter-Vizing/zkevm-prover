@@ -287,7 +287,6 @@ void runFileExecute(Goldilocks fr, Prover &prover, Config &config)
 int main(int argc, char **argv)
 {
     /* CONFIG */
-
     if (argc == 2)
     {
         if ((strcmp(argv[1], "-v") == 0) || (strcmp(argv[1], "--version") == 0))
