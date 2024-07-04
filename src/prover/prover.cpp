@@ -648,7 +648,9 @@ void Prover::genBatchProof(ProverRequest *pProverRequest)
         pProverRequest->batchProofOutput = zkinRecursive1;
 
         // save publics to filestarks
-        json2file(publicStarkJson, pProverRequest->publicsOutputFile());
+        if (config.saveOutputPublicToFile) {
+            json2file(publicStarkJson, pProverRequest->publicsOutputFile());
+        }
 
         // Save output to file
         if (config.saveOutputToFile)
@@ -811,7 +813,9 @@ void Prover::genAggregatedProof(ProverRequest *pProverRequest)
     publicsJson[46] = to_string(recursive2Verkey["constRoot"][2]);
     publicsJson[47] = to_string(recursive2Verkey["constRoot"][3]);
 
-    json2file(publicsJson, pProverRequest->publicsOutputFile());
+    if (config.saveOutputPublicToFile) {
+        json2file(publicsJson, pProverRequest->publicsOutputFile());
+    }
 
     pProverRequest->result = ZKR_SUCCESS;
 
@@ -914,7 +918,9 @@ void Prover::genFinalProof(ProverRequest *pProverRequest)
     AltBn128::FrElement aux;
     AltBn128::Fr.toMontgomery(aux, pWitnessFinal[1]);
     publicJson[0] = AltBn128::Fr.toString(aux);
-    json2file(publicJson, pProverRequest->publicsOutputFile());
+    if (config.saveOutputPublicToFile) {
+        json2file(publicJson, pProverRequest->publicsOutputFile());
+    }
     TimerStopAndLog(SAVE_PUBLICS_JSON);
 
     if (Zkey::GROTH16_PROTOCOL_ID != protocolId)

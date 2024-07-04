@@ -163,6 +163,7 @@ void Config::load(json &config)
     ParseBool(config, "saveDbReadsToFile", "SAVE_DB_READS_TO_FILE", saveDbReadsToFile, false);
     ParseBool(config, "saveDbReadsToFileOnChange", "SAVE_DB_READS_TO_FILE_ON_CHANGE", saveDbReadsToFileOnChange, false);
     ParseBool(config, "saveOutputToFile", "SAVE_OUTPUT_TO_FILE", saveOutputToFile, false);
+    ParseBool(config, "saveOutputPublicToFile", "SAVE_OUTPUT_PUBLIC_TO_FILE", saveOutputPublicToFile, false);
     ParseBool(config, "saveResponseToFile", "SAVE_RESPONSE_TO_FILE", saveResponseToFile, false);
     ParseBool(config, "saveProofToFile", "SAVE_PROOF_TO_FILE", saveProofToFile, false);
     ParseBool(config, "saveFilesInSubfolders", "SAVE_FILES_IN_SUBFOLDERS", saveFilesInSubfolders, false);
@@ -429,6 +430,9 @@ void Config::print(void)
         zklog.info("    logExecutorServerTxs=true");
     if (dontLoadRomOffsets)
         zklog.info("    dontLoadRomOffsets=true");
+    if (saveOutputPublicToFile) {
+        zklog.info("    saveOutputPublicToFile=true");
+    }
 
     zklog.info("    executorServerPort=" + to_string(executorServerPort));
     zklog.info("    executorClientPort=" + to_string(executorClientPort));
@@ -520,6 +524,7 @@ void Config::print(void)
     zklog.info("    fullTracerTraceReserveSize=" + to_string(fullTracerTraceReserveSize));
     zklog.info("    ECRecoverPrecalc=" + to_string(ECRecoverPrecalc));
     zklog.info("    ECRecoverPrecalcNThreads=" + to_string(ECRecoverPrecalcNThreads));
+    zklog.info("    saveOutputPublicToFile=" + to_string(saveOutputPublicToFile));
 }
 
 bool Config::check (void)
