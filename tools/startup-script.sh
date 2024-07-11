@@ -9,7 +9,7 @@ find /home/ubuntu/zkevm-prover-build/config/ -type f | parallel -j 96 sha256sum 
 # Step 2: Modify zkprover config file
 
 # Refresh config_prover.json using env variables first
-./home/ubuntu/zkevm-prover-build/tools/set_config.sh
+/home/ubuntu/zkevm-prover-build/tools/set_config.sh
 
 # Get instance ID from instance metadata service
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
