@@ -24,3 +24,4 @@ MyLogFile.log
 logs
 tools/monitor_restart.sh
 v3.0.0-RC3-fork.6
+/temp/
