@@ -282,6 +282,7 @@ void Rom::loadProgram(Goldilocks &fr, json &romJson)
         if (l["inGAS"].is_string()) fr.fromString(line[i].inGAS, l["inGAS"]); else line[i].inGAS = fr.zero();
         if (l["inSTEP"].is_string()) fr.fromString(line[i].inSTEP, l["inSTEP"]); else line[i].inSTEP = fr.zero();
         if (l["inFREE"].is_string()) fr.fromString(line[i].inFREE, l["inFREE"]); else line[i].inFREE = fr.zero();
+        if (l["inFREE0"].is_string()) fr.fromString(line[i].inFREE0, l["inFREE0"]); else line[i].inFREE0 = fr.zero();
         if (l["inRR"].is_string()) fr.fromString(line[i].inRR, l["inRR"]); else line[i].inRR = fr.zero();
         if (l["inHASHPOS"].is_string()) fr.fromString(line[i].inHASHPOS, l["inHASHPOS"]); else line[i].inHASHPOS = fr.zero();
         if (l["inCntArith"].is_string()) fr.fromString(line[i].inCntArith, l["inCntArith"]); else line[i].inCntArith = fr.zero();
@@ -342,6 +343,9 @@ void Rom::loadProgram(Goldilocks &fr, json &romJson)
         if (l["arithEq0"].is_number_integer()) line[i].arithEq0 = l["arithEq0"]; else line[i].arithEq0 = 0;
         if (l["arithEq1"].is_number_integer()) line[i].arithEq1 = l["arithEq1"]; else line[i].arithEq1 = 0;
         if (l["arithEq2"].is_number_integer()) line[i].arithEq2 = l["arithEq2"]; else line[i].arithEq2 = 0;
+        if (l["arithEq3"].is_number_integer()) line[i].arithEq3 = l["arithEq3"]; else line[i].arithEq3 = 0;
+        if (l["arithEq4"].is_number_integer()) line[i].arithEq4 = l["arithEq4"]; else line[i].arithEq4 = 0;
+        if (l["arithEq5"].is_number_integer()) line[i].arithEq5 = l["arithEq5"]; else line[i].arithEq5 = 0;
         if (l["bin"].is_number_integer()) line[i].bin = l["bin"]; else line[i].bin = 0;
         if (l["binOpcode"].is_number_integer()) line[i].binOpcode = l["binOpcode"]; else line[i].binOpcode = 0;
         if (l["memAlignRD"].is_number_integer()) line[i].memAlignRD = l["memAlignRD"]; else line[i].memAlignRD = 0;
@@ -426,7 +430,14 @@ uint64_t Rom::getConstant(json &romJson, const string &constantName)
     string auxString;
     auxString = romJson["constants"][constantName]["value"];
     //cout << "Rom::getConstant() " << constantName << "=" << auxString << endl;
-    return atoi(auxString.c_str());
+    mpz_class auxScalar;
+    auxScalar.set_str(auxString, 10);
+    if (auxScalar > ScalarMask64)
+    {
+        zklog.error("Rom::getConstant() found too large constant " + constantName + " in rom json, value=" + auxString);
+        exitProcess();
+    }
+    return auxScalar.get_ui();
 }
 
 mpz_class Rom::getConstantL(json &romJson, const string &constantName)

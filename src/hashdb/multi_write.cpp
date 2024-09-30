@@ -32,6 +32,13 @@ string MultiWrite::print(void)
         " synchronizingDataIndex=" + to_string(synchronizingDataIndex);
 }
 
+string MultiWrite::mem(void)
+{
+    return " data[0].MemSize=" + data[0].GetMemoryUsage() +
+           " data[1].MemSize=" + data[1].GetMemoryUsage() +
+           " data[2].MemSize=" + data[2].GetMemoryUsage();
+}
+
 bool MultiWrite::findNode(const string &key, vector<Goldilocks::Element> &value)
 {
     value.clear();

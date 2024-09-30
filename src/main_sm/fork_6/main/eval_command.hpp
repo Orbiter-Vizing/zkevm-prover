@@ -123,6 +123,15 @@ void eval_memAlignWR_W0       (Context &ctx, const RomCommand &cmd, CommandResul
 void eval_memAlignWR_W1       (Context &ctx, const RomCommand &cmd, CommandResult &cr);
 void eval_memAlignWR8_W0      (Context &ctx, const RomCommand &cmd, CommandResult &cr);
 
+// Etrog (fork 7) new methods:
+void eval_ARITH_BN254_ADDFP2          (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_ARITH_BN254_SUBFP2          (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_ARITH_BN254_MULFP2_X        (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_ARITH_BN254_MULFP2_Y        (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_fp2InvBN254_x               (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_fp2InvBN254_y               (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+void eval_fpBN254inv                  (Context &ctx, const RomCommand &cmd, CommandResult &cr);
+
 zkresult AddPointEc (Context &ctx, bool dbl, const RawFec::Element &x1, const RawFec::Element &y1, const RawFec::Element &x2, const RawFec::Element &y2, RawFec::Element &x3, RawFec::Element &y3);
 
 zkresult eval_addReadWriteAddress (Context &ctx, const mpz_class value);

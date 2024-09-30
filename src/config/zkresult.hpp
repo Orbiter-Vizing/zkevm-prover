@@ -90,7 +90,7 @@ typedef enum : int
     ZKR_SM_MAIN_HASHP_READ_OUT_OF_RANGE = 80, // Main state Poseidon hash check found read out of range
     ZKR_DB_VERSION_NOT_FOUND_KVDB = 81, // Version not found in KeyValue database
     ZKR_DB_VERSION_NOT_FOUND_GLOBAL = 82, // Version not found in KeyValue database and not present in hashDB neither
-
+    ZKR_SM_MAIN_BINARY_LT4_MISMATCH = 83, // Main state machine binary less than 4 ROM operation check failed
     
 } zkresult;
 

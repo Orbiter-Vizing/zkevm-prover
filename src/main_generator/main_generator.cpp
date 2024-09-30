@@ -9,6 +9,7 @@ using json = nlohmann::json;
 
 // Fork namespace
 const string forkNamespace = PROVER_FORK_NAMESPACE_STRING;
+const uint64_t proverForkID = PROVER_FORK_ID;
 
 // Forward declaration
 void file2json (json &rom, string &romFileName);
@@ -34,8 +35,10 @@ int main(int argc, char **argv)
 
     // Load rom.json
     string romFileName = "src/main_sm/" + forkNamespace + "/scripts/rom.json";
+    cout << "ROM file name=" << romFileName << endl;
     json rom;
     file2json(rom, romFileName);
+    cout << "ROM file loaded" << endl;
 
     string code = generate(rom, functionName, fileName, false, false);
     string2file(code, directoryName + "/" + fileName + ".cpp");
@@ -272,9 +275,9 @@ string generate(const json &rom, const string &functionName, const string &fileN
 
     code += "    mainExecutor.initState(ctx);\n\n";
 
-    code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
-    code += "    remove(\"c.txt\");\n";
-    code += "#endif\n\n";
+//    code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
+//    code += "    remove(\"c.txt\");\n";
+//    code += "#endif\n\n";
 
     code += "    // Copy input database content into context database\n";
     code += "    if (proverRequest.input.db.size() > 0)\n";
@@ -373,6 +376,9 @@ string generate(const json &rom, const string &functionName, const string &fileN
     code += "    bool x3eq;\n";
     code += "    bool y3eq;\n";
     code += "    RawFec::Element fecX1, fecY1, fecX2, fecY2, fecX3, fecY3;\n";
+    code += "    RawFq::Element x1fe, y1fe, x2fe, y2fe, x3fe, y3fe;\n";
+    code += "    RawFq::Element _x3fe, _y3fe;\n";
+    code += "    uint64_t depth;\n";
 
     if (!bFastMode)
         code += "    MemoryAccess memoryAccess;\n";
@@ -448,22 +454,23 @@ string generate(const json &rom, const string &functionName, const string &fileN
         //if (!usedLabels.includes(zkPC))
         //    code += "// ";
         code += functionName + "_rom_line_" + to_string(zkPC) + ": //" + string(rom["program"][zkPC]["fileName"]) + ":" + to_string(rom["program"][zkPC]["line"]) + "=[" + removeDuplicateSpaces(string(rom["program"][zkPC]["lineStr"])) + "]\n\n";
+//        code += "    zklog.info(\"--> " + string(rom["program"][zkPC]["fileName"]) + ":" + to_string(rom["program"][zkPC]["line"]) + "=[" + removeDuplicateSpaces(string(rom["program"][zkPC]["lineStr"])) + "]\");\n";
 
         // START LOGS
-        code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
-        code += "    fi0=fi1=fi2=fi3=fi4=fi5=fi6=fi7=fr.zero();\n";
-        code += "#endif\n";
-        code += "#ifdef LOG_START_STEPS\n";
-        code += "    zklog.info(\"--> Starting step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) + " zkasm=\" + rom.line[" + to_string(zkPC) + "].lineStr);\n";
-        code += "#endif\n";
-        code += "#ifdef LOG_PRINT_ROM_LINES\n";
-        code += "    zklog.info(\"step=\" + to_string(i) + \" rom.line[" + to_string(zkPC) + "] =[\" + rom.line[" + to_string(zkPC) + "].toString(fr) + \"]\");\n";
-        code += "#endif\n";
-        code += "#ifdef LOG_START_STEPS_TO_FILE\n";
-        code += "    outfile.open(\"c.txt\", std::ios_base::app); // append instead of overwrite\n";
-        code += "    outfile << \"--> Starting step=\" << i << \" zkPC=" + to_string(zkPC) + " instruction= \" << rom.line[" + to_string(zkPC) + "].toString(fr) << endl;\n";
-        code += "    outfile.close();\n";
-        code += "#endif\n\n";
+//        code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
+//        code += "    fi0=fi1=fi2=fi3=fi4=fi5=fi6=fi7=fr.zero();\n";
+//        code += "#endif\n";
+//        code += "#ifdef LOG_START_STEPS\n";
+//        code += "    zklog.info(\"--> Starting step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) + " zkasm=\" + rom.line[" + to_string(zkPC) + "].lineStr);\n";
+//        code += "#endif\n";
+//        code += "#ifdef LOG_PRINT_ROM_LINES\n";
+//        code += "    zklog.info(\"step=\" + to_string(i) + \" rom.line[" + to_string(zkPC) + "] =[\" + rom.line[" + to_string(zkPC) + "].toString(fr) + \"]\");\n";
+//        code += "#endif\n";
+//        code += "#ifdef LOG_START_STEPS_TO_FILE\n";
+//        code += "    outfile.open(\"c.txt\", std::ios_base::app); // append instead of overwrite\n";
+//        code += "    outfile << \"--> Starting step=\" << i << \" zkPC=" + to_string(zkPC) + " instruction= \" << rom.line[" + to_string(zkPC) + "].toString(fr) << endl;\n";
+//        code += "    outfile.close();\n";
+//        code += "#endif\n\n";
 
         // ECRECOVER PRE-CALCULATION 
         if(rom["labels"].contains("ecrecover_store_args") && zkPC == rom["labels"]["ecrecover_store_args"]){
@@ -722,7 +729,9 @@ string generate(const json &rom, const string &functionName, const string &fileN
         if (rom["program"][zkPC].contains("CONST") && (rom["program"][zkPC]["CONST"]!=0))
         {
             string aux = rom["program"][zkPC]["CONST"];
-            int64_t iAux = atoi(aux.c_str());
+            mpz_class auxScalar;
+            auxScalar.set_str(aux, 10);
+            int64_t iAux = auxScalar.get_si();
             if (iAux!=0)
             {
                 code += selectorConst(/*rom["program"][zkPC]["CONST"]*/iAux, opInitialized, bFastMode);
@@ -892,9 +901,9 @@ string generate(const json &rom, const string &functionName, const string &fileN
         }
         else
         {
-            code += "#if (defined LOG_COMPLETED_STEPS) || (defined LOG_COMPLETED_STEPS_TO_FILE)\n";
-            code += "    addr = 0;\n";
-            code += "#endif\n\n";
+//            code += "#if (defined LOG_COMPLETED_STEPS) || (defined LOG_COMPLETED_STEPS_TO_FILE)\n";
+//            code += "    addr = 0;\n";
+//            code += "#endif\n\n";
         }
 
         if (rom["program"][zkPC].contains("useCTX") && (rom["program"][zkPC]["useCTX"] == 1))
@@ -955,7 +964,7 @@ string generate(const json &rom, const string &functionName, const string &fileN
         /* FREE INPUT */
         /**************/
 
-        if (rom["program"][zkPC].contains("inFREE"))
+        if (rom["program"][zkPC].contains("inFREE") || rom["program"][zkPC].contains("inFREE0"))
         {
 
             if (!rom["program"][zkPC].contains("freeInTag"))
@@ -1643,6 +1652,29 @@ string generate(const json &rom, const string &functionName, const string &fileN
                         code += "    scalar2fea(fr, c, fi0, fi1, fi2, fi3, fi4, fi5, fi6, fi7);\n";
                         nHits++;
                     }
+                    else if (rom["program"][zkPC]["binOpcode"] == 8) // LT4
+                    {
+                        code += "    //Binary free in XOR\n";
+                        code += "    if (!fea2scalar(fr, a, pols.A0[" + string(bFastMode?"0":"i") + "], pols.A1[" + string(bFastMode?"0":"i") + "], pols.A2[" + string(bFastMode?"0":"i") + "], pols.A3[" + string(bFastMode?"0":"i") + "], pols.A4[" + string(bFastMode?"0":"i") + "], pols.A5[" + string(bFastMode?"0":"i") + "], pols.A6[" + string(bFastMode?"0":"i") + "], pols.A7[" + string(bFastMode?"0":"i") + "]))\n";
+                        code += "    {\n";
+                        code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                        code += "        zkPC=" + to_string(zkPC) +";\n";
+                        code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.A)\");\n";
+                        code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                        code += "        return;\n";
+                        code += "    }\n";
+                        code += "    if (!fea2scalar(fr, b, pols.B0[" + string(bFastMode?"0":"i") + "], pols.B1[" + string(bFastMode?"0":"i") + "], pols.B2[" + string(bFastMode?"0":"i") + "], pols.B3[" + string(bFastMode?"0":"i") + "], pols.B4[" + string(bFastMode?"0":"i") + "], pols.B5[" + string(bFastMode?"0":"i") + "], pols.B6[" + string(bFastMode?"0":"i") + "], pols.B7[" + string(bFastMode?"0":"i") + "]))\n";
+                        code += "    {\n";
+                        code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                        code += "        zkPC=" + to_string(zkPC) +";\n";
+                        code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.B)\");\n";
+                        code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                        code += "        return;\n";
+                        code += "    }\n";
+                        code += "    c = lt4(a, b);\n";
+                        code += "    scalar2fea(fr, c, fi0, fi1, fi2, fi3, fi4, fi5, fi6, fi7);\n";
+                        nHits++;
+                    }
                     else
                     {
                         cerr << "Error: Invalid binary operation: opcode=" << rom["program"][zkPC]["binOpcode"] << endl;
@@ -1884,7 +1916,8 @@ string generate(const json &rom, const string &functionName, const string &fileN
 
             code += "    // op = op + inFREE*fi\n";
             string inFREEString = rom["program"][zkPC]["inFREE"];
-            int64_t inFREE = atoi(inFREEString.c_str());
+            string inFREE0String = rom["program"][zkPC]["inFREE0"];
+            int64_t inFREE = atoi(inFREEString.c_str()) + atoi(inFREE0String.c_str());
             if (inFREE == 1)
             {
                 if (opInitialized)
@@ -1915,7 +1948,7 @@ string generate(const json &rom, const string &functionName, const string &fileN
             {
                 if (opInitialized)
                 {
-                    code += "    op0 = fr.add(op0, fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi0));\n";
+                    code += "    op0 = fr.add(op0, fr.mul(fr.add(rom.line[" + to_string(zkPC) + "].inFREE, rom.line[" + to_string(zkPC) + "].inFREE0), fi0));\n";
                     code += "    op1 = fr.add(op1, fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi1));\n";
                     code += "    op2 = fr.add(op2, fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi2));\n";
                     code += "    op3 = fr.add(op3, fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi3));\n";
@@ -1926,7 +1959,7 @@ string generate(const json &rom, const string &functionName, const string &fileN
                 }
                 else
                 {
-                    code += "    op0 = fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi0);\n";
+                    code += "    op0 = fr.mul(fr.add(rom.line[" + to_string(zkPC) + "].inFREE, rom.line[" + to_string(zkPC) + "].inFREE0), fi0);\n";
                     code += "    op1 = fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi1);\n";
                     code += "    op2 = fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi2);\n";
                     code += "    op3 = fr.mul(rom.line[" + to_string(zkPC) + "].inFREE, fi3);\n";
@@ -1942,6 +1975,7 @@ string generate(const json &rom, const string &functionName, const string &fileN
             {
                 code += "    // Copy ROM flags into the polynomials\n";
                 code += "    pols.inFREE[i] = rom.line[" + to_string(zkPC) + "].inFREE;\n\n";
+                code += "    pols.inFREE0[i] = rom.line[" + to_string(zkPC) + "].inFREE0;\n\n";
             }
         }
 
@@ -3097,12 +3131,20 @@ string generate(const json &rom, const string &functionName, const string &fileN
 
         if ( (rom["program"][zkPC].contains("arithEq0") && (rom["program"][zkPC]["arithEq0"]==1)) ||
              (rom["program"][zkPC].contains("arithEq1") && (rom["program"][zkPC]["arithEq1"]==1)) ||
-             (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) )
+             (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq3") && (rom["program"][zkPC]["arithEq3"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq4") && (rom["program"][zkPC]["arithEq4"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq5") && (rom["program"][zkPC]["arithEq5"]==1)) ||
+             false)
         {
             // Arith instruction: check that A*B + C = D<<256 + op, using scalars (result can be a big number)
             if ( (rom["program"][zkPC].contains("arithEq0") && rom["program"][zkPC]["arithEq0"]==1) &&
                  (!rom["program"][zkPC].contains("arithEq1") || rom["program"][zkPC]["arithEq1"]==0) &&
-                 (!rom["program"][zkPC].contains("arithEq2") || rom["program"][zkPC]["arithEq2"]==0) )
+                 (!rom["program"][zkPC].contains("arithEq2") || rom["program"][zkPC]["arithEq2"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq3") || rom["program"][zkPC]["arithEq3"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq4") || rom["program"][zkPC]["arithEq4"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq5") || rom["program"][zkPC]["arithEq5"]==0) &&
+                 true)
             {
                 code += "    // Arith instruction: check that A*B + C = D<<256 + op, using scalars (result can be a big number)\n";
 
@@ -3175,6 +3217,323 @@ string generate(const json &rom, const string &functionName, const string &fileN
                     code += "    arithAction.selEq1 = 0;\n";
                     code += "    arithAction.selEq2 = 0;\n";
                     code += "    arithAction.selEq3 = 0;\n";
+                    code += "    arithAction.selEq4 = 0;\n";
+                    code += "    arithAction.selEq5 = 0;\n";
+                    code += "    arithAction.selEq6 = 0;\n";
+                    code += "    required.Arith.push_back(arithAction);\n";
+                }
+            }
+            // Arithmetic FP2 multiplication
+            else if ( (!rom["program"][zkPC].contains("arithEq0") || rom["program"][zkPC]["arithEq0"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq1") || rom["program"][zkPC]["arithEq1"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq2") || rom["program"][zkPC]["arithEq2"]==0) &&
+                 (rom["program"][zkPC].contains("arithEq3") && rom["program"][zkPC]["arithEq3"]==1) &&
+                 (!rom["program"][zkPC].contains("arithEq4") || rom["program"][zkPC]["arithEq4"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq5") || rom["program"][zkPC]["arithEq5"]==0) )
+            {
+                code += "    // Convert to scalar\n";
+                code += "    if (!fea2scalar(fr, x1, pols.A0[" + string(bFastMode?"0":"i") + "], pols.A1[" + string(bFastMode?"0":"i") + "], pols.A2[" + string(bFastMode?"0":"i") + "], pols.A3[" + string(bFastMode?"0":"i") + "], pols.A4[" + string(bFastMode?"0":"i") + "], pols.A5[" + string(bFastMode?"0":"i") + "], pols.A6[" + string(bFastMode?"0":"i") + "], pols.A7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.A)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y1, pols.B0[" + string(bFastMode?"0":"i") + "], pols.B1[" + string(bFastMode?"0":"i") + "], pols.B2[" + string(bFastMode?"0":"i") + "], pols.B3[" + string(bFastMode?"0":"i") + "], pols.B4[" + string(bFastMode?"0":"i") + "], pols.B5[" + string(bFastMode?"0":"i") + "], pols.B6[" + string(bFastMode?"0":"i") + "], pols.B7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.B)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x2, pols.C0[" + string(bFastMode?"0":"i") + "], pols.C1[" + string(bFastMode?"0":"i") + "], pols.C2[" + string(bFastMode?"0":"i") + "], pols.C3[" + string(bFastMode?"0":"i") + "], pols.C4[" + string(bFastMode?"0":"i") + "], pols.C5[" + string(bFastMode?"0":"i") + "], pols.C6[" + string(bFastMode?"0":"i") + "], pols.C7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.C)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y2, pols.D0[" + string(bFastMode?"0":"i") + "], pols.D1[" + string(bFastMode?"0":"i") + "], pols.D2[" + string(bFastMode?"0":"i") + "], pols.D3[" + string(bFastMode?"0":"i") + "], pols.D4[" + string(bFastMode?"0":"i") + "], pols.D5[" + string(bFastMode?"0":"i") + "], pols.D6[" + string(bFastMode?"0":"i") + "], pols.D7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.D)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x3, pols.E0[" + string(bFastMode?"0":"i") + "], pols.E1[" + string(bFastMode?"0":"i") + "], pols.E2[" + string(bFastMode?"0":"i") + "], pols.E3[" + string(bFastMode?"0":"i") + "], pols.E4[" + string(bFastMode?"0":"i") + "], pols.E5[" + string(bFastMode?"0":"i") + "], pols.E6[" + string(bFastMode?"0":"i") + "], pols.E7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.E)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y3, op0, op1, op2, op3, op4, op5, op6, op7))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(op)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                // EQ5:  x1 * x2 - y1 * y2 = x3
+                // EQ6:  y1 * x2 + x1 * y2 = y3
+
+                code += "    fq.fromMpz(x1fe, x1.get_mpz_t());\n";
+                code += "    fq.fromMpz(y1fe, y1.get_mpz_t());\n";
+                code += "    fq.fromMpz(x2fe, x2.get_mpz_t());\n";
+                code += "    fq.fromMpz(y2fe, y2.get_mpz_t());\n";
+                code += "    fq.fromMpz(x3fe, x3.get_mpz_t());\n";
+                code += "    fq.fromMpz(y3fe, y3.get_mpz_t());\n";
+
+                code += "    _x3fe = fq.sub(fq.mul(x1fe, x2fe), fq.mul(y1fe, y2fe));\n";
+                code += "    _y3fe = fq.add(fq.mul(y1fe, x2fe), fq.mul(x1fe, y2fe));\n";
+
+                code += "    x3eq = fq.eq(x3fe, _x3fe);\n";
+                code += "    y3eq = fq.eq(y3fe, _y3fe);\n";
+
+                code += "    if (!x3eq || !y3eq)\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_ARITH_MISMATCH;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Arithmetic FP2 multiplication point does not match: x3=\" + fq.toString(x3fe, 16) + \" _x3=\" + fq.toString(_x3fe, 16) + \" y3=\" + fq.toString(y3fe, 16) + \" _y3=\" + fq.toString(_y3fe, 16));\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                if (!bFastMode)
+                {
+                    code += "    // Copy ROM flags into the polynomials\n";
+                    code += "    pols.arithEq3[i] = fr.one();\n";
+                    code += "    // Store the arith action to execute it later with the arith SM\n";
+                    code += "    arithAction.x1 = x1;\n";
+                    code += "    arithAction.y1 = y1;\n";
+                    code += "    arithAction.x2 = x2;\n";
+                    code += "    arithAction.y2 = y2;\n";
+                    code += "    arithAction.x3 = x3;\n";
+                    code += "    arithAction.y3 = y3;\n";
+                    code += "    arithAction.selEq0 = 0;\n";
+                    code += "    arithAction.selEq1 = 0;\n";
+                    code += "    arithAction.selEq2 = 0;\n";
+                    code += "    arithAction.selEq3 = 0;\n";
+                    code += "    arithAction.selEq4 = 1;\n";
+                    code += "    arithAction.selEq5 = 0;\n";
+                    code += "    arithAction.selEq6 = 0;\n";
+                    code += "    required.Arith.push_back(arithAction);\n";
+                }
+            }
+
+            // Arithmetic FP2 addition
+            else if ( (!rom["program"][zkPC].contains("arithEq0") || rom["program"][zkPC]["arithEq0"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq1") || rom["program"][zkPC]["arithEq1"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq2") || rom["program"][zkPC]["arithEq2"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq3") || rom["program"][zkPC]["arithEq3"]==0) &&
+                 (rom["program"][zkPC].contains("arithEq4") && rom["program"][zkPC]["arithEq4"]==1) &&
+                 (!rom["program"][zkPC].contains("arithEq5") || rom["program"][zkPC]["arithEq5"]==0) )
+            {
+                code += "    // Convert to scalar\n";
+                code += "    if (!fea2scalar(fr, x1, pols.A0[" + string(bFastMode?"0":"i") + "], pols.A1[" + string(bFastMode?"0":"i") + "], pols.A2[" + string(bFastMode?"0":"i") + "], pols.A3[" + string(bFastMode?"0":"i") + "], pols.A4[" + string(bFastMode?"0":"i") + "], pols.A5[" + string(bFastMode?"0":"i") + "], pols.A6[" + string(bFastMode?"0":"i") + "], pols.A7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.A)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y1, pols.B0[" + string(bFastMode?"0":"i") + "], pols.B1[" + string(bFastMode?"0":"i") + "], pols.B2[" + string(bFastMode?"0":"i") + "], pols.B3[" + string(bFastMode?"0":"i") + "], pols.B4[" + string(bFastMode?"0":"i") + "], pols.B5[" + string(bFastMode?"0":"i") + "], pols.B6[" + string(bFastMode?"0":"i") + "], pols.B7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.B)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x2, pols.C0[" + string(bFastMode?"0":"i") + "], pols.C1[" + string(bFastMode?"0":"i") + "], pols.C2[" + string(bFastMode?"0":"i") + "], pols.C3[" + string(bFastMode?"0":"i") + "], pols.C4[" + string(bFastMode?"0":"i") + "], pols.C5[" + string(bFastMode?"0":"i") + "], pols.C6[" + string(bFastMode?"0":"i") + "], pols.C7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.C)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y2, pols.D0[" + string(bFastMode?"0":"i") + "], pols.D1[" + string(bFastMode?"0":"i") + "], pols.D2[" + string(bFastMode?"0":"i") + "], pols.D3[" + string(bFastMode?"0":"i") + "], pols.D4[" + string(bFastMode?"0":"i") + "], pols.D5[" + string(bFastMode?"0":"i") + "], pols.D6[" + string(bFastMode?"0":"i") + "], pols.D7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.D)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x3, pols.E0[" + string(bFastMode?"0":"i") + "], pols.E1[" + string(bFastMode?"0":"i") + "], pols.E2[" + string(bFastMode?"0":"i") + "], pols.E3[" + string(bFastMode?"0":"i") + "], pols.E4[" + string(bFastMode?"0":"i") + "], pols.E5[" + string(bFastMode?"0":"i") + "], pols.E6[" + string(bFastMode?"0":"i") + "], pols.E7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.E)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y3, op0, op1, op2, op3, op4, op5, op6, op7))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(op)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                // EQ7:  x1 + x2 = x3
+                // EQ8:  y1 + y2 = y3
+
+                code += "    fq.fromMpz(x1fe, x1.get_mpz_t());\n";
+                code += "    fq.fromMpz(y1fe, y1.get_mpz_t());\n";
+                code += "    fq.fromMpz(x2fe, x2.get_mpz_t());\n";
+                code += "    fq.fromMpz(y2fe, y2.get_mpz_t());\n";
+                code += "    fq.fromMpz(x3fe, x3.get_mpz_t());\n";
+                code += "    fq.fromMpz(y3fe, y3.get_mpz_t());\n";
+
+                code += "    _x3fe = fq.add(x1fe, x2fe);\n";
+                code += "    _y3fe = fq.add(y1fe, y2fe);\n";
+
+                code += "    x3eq = fq.eq(x3fe, _x3fe);\n";
+                code += "    y3eq = fq.eq(y3fe, _y3fe);\n";
+
+                code += "    if (!x3eq || !y3eq)\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_ARITH_MISMATCH;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Arithmetic FP2 addition point does not match: x3=\" + fq.toString(x3fe, 16) + \" _x3=\" + fq.toString(_x3fe, 16) + \" y3=\" + fq.toString(y3fe, 16) + \" _y3=\" + fq.toString(_y3fe, 16));\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                if (!bFastMode)
+                {
+                    code += "    // Copy ROM flags into the polynomials\n";
+                    code += "    pols.arithEq4[i] = fr.one();\n";
+                    code += "    // Store the arith action to execute it later with the arith SM\n";
+                    code += "    arithAction.x1 = x1;\n";
+                    code += "    arithAction.y1 = y1;\n";
+                    code += "    arithAction.x2 = x2;\n";
+                    code += "    arithAction.y2 = y2;\n";
+                    code += "    arithAction.x3 = x3;\n";
+                    code += "    arithAction.y3 = y3;\n";
+                    code += "    arithAction.selEq0 = 0;\n";
+                    code += "    arithAction.selEq1 = 0;\n";
+                    code += "    arithAction.selEq2 = 0;\n";
+                    code += "    arithAction.selEq3 = 0;\n";
+                    code += "    arithAction.selEq4 = 0;\n";
+                    code += "    arithAction.selEq5 = 1;\n";
+                    code += "    arithAction.selEq6 = 0;\n";
+                    code += "    required.Arith.push_back(arithAction);\n";
+                }
+            }
+
+            // Arithmetic FP2 subtraction
+            else if ( (!rom["program"][zkPC].contains("arithEq0") || rom["program"][zkPC]["arithEq0"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq1") || rom["program"][zkPC]["arithEq1"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq2") || rom["program"][zkPC]["arithEq2"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq3") || rom["program"][zkPC]["arithEq3"]==0) &&
+                 (!rom["program"][zkPC].contains("arithEq4") || rom["program"][zkPC]["arithEq4"]==0) &&
+                 (rom["program"][zkPC].contains("arithEq5") && rom["program"][zkPC]["arithEq5"]==1)  )
+            {
+                code += "    // Convert to scalar\n";
+                code += "    if (!fea2scalar(fr, x1, pols.A0[" + string(bFastMode?"0":"i") + "], pols.A1[" + string(bFastMode?"0":"i") + "], pols.A2[" + string(bFastMode?"0":"i") + "], pols.A3[" + string(bFastMode?"0":"i") + "], pols.A4[" + string(bFastMode?"0":"i") + "], pols.A5[" + string(bFastMode?"0":"i") + "], pols.A6[" + string(bFastMode?"0":"i") + "], pols.A7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.A)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y1, pols.B0[" + string(bFastMode?"0":"i") + "], pols.B1[" + string(bFastMode?"0":"i") + "], pols.B2[" + string(bFastMode?"0":"i") + "], pols.B3[" + string(bFastMode?"0":"i") + "], pols.B4[" + string(bFastMode?"0":"i") + "], pols.B5[" + string(bFastMode?"0":"i") + "], pols.B6[" + string(bFastMode?"0":"i") + "], pols.B7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.B)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x2, pols.C0[" + string(bFastMode?"0":"i") + "], pols.C1[" + string(bFastMode?"0":"i") + "], pols.C2[" + string(bFastMode?"0":"i") + "], pols.C3[" + string(bFastMode?"0":"i") + "], pols.C4[" + string(bFastMode?"0":"i") + "], pols.C5[" + string(bFastMode?"0":"i") + "], pols.C6[" + string(bFastMode?"0":"i") + "], pols.C7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.C)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y2, pols.D0[" + string(bFastMode?"0":"i") + "], pols.D1[" + string(bFastMode?"0":"i") + "], pols.D2[" + string(bFastMode?"0":"i") + "], pols.D3[" + string(bFastMode?"0":"i") + "], pols.D4[" + string(bFastMode?"0":"i") + "], pols.D5[" + string(bFastMode?"0":"i") + "], pols.D6[" + string(bFastMode?"0":"i") + "], pols.D7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.D)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, x3, pols.E0[" + string(bFastMode?"0":"i") + "], pols.E1[" + string(bFastMode?"0":"i") + "], pols.E2[" + string(bFastMode?"0":"i") + "], pols.E3[" + string(bFastMode?"0":"i") + "], pols.E4[" + string(bFastMode?"0":"i") + "], pols.E5[" + string(bFastMode?"0":"i") + "], pols.E6[" + string(bFastMode?"0":"i") + "], pols.E7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.E)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, y3, op0, op1, op2, op3, op4, op5, op6, op7))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(op)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                // EQ7:  x1 - x2 = x3
+                // EQ8:  y1 - y2 = y3
+
+                code += "    fq.fromMpz(x1fe, x1.get_mpz_t());\n";
+                code += "    fq.fromMpz(y1fe, y1.get_mpz_t());\n";
+                code += "    fq.fromMpz(x2fe, x2.get_mpz_t());\n";
+                code += "    fq.fromMpz(y2fe, y2.get_mpz_t());\n";
+                code += "    fq.fromMpz(x3fe, x3.get_mpz_t());\n";
+                code += "    fq.fromMpz(y3fe, y3.get_mpz_t());\n";
+
+                code += "    _x3fe = fq.sub(x1fe, x2fe);\n";
+                code += "    _y3fe = fq.sub(y1fe, y2fe);\n";
+
+                code += "    x3eq = fq.eq(x3fe, _x3fe);\n";
+                code += "    y3eq = fq.eq(y3fe, _y3fe);\n";
+
+                code += "    if (!x3eq || !y3eq)\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_ARITH_MISMATCH;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Arithmetic FP2 subtraction point does not match: x3=\" + fq.toString(x3fe, 16) + \" _x3=\" + fq.toString(_x3fe, 16) + \" y3=\" + fq.toString(y3fe, 16) + \" _y3=\" + fq.toString(_y3fe, 16));\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+
+                if (!bFastMode)
+                {
+                    code += "    // Copy ROM flags into the polynomials\n";
+                    code += "    pols.arithEq5[i] = fr.one();\n";
+                    code += "    // Store the arith action to execute it later with the arith SM\n";
+                    code += "    arithAction.x1 = x1;\n";
+                    code += "    arithAction.y1 = y1;\n";
+                    code += "    arithAction.x2 = x2;\n";
+                    code += "    arithAction.y2 = y2;\n";
+                    code += "    arithAction.x3 = x3;\n";
+                    code += "    arithAction.y3 = y3;\n";
+                    code += "    arithAction.selEq0 = 0;\n";
+                    code += "    arithAction.selEq1 = 0;\n";
+                    code += "    arithAction.selEq2 = 0;\n";
+                    code += "    arithAction.selEq3 = 0;\n";
+                    code += "    arithAction.selEq4 = 0;\n";
+                    code += "    arithAction.selEq5 = 0;\n";
+                    code += "    arithAction.selEq6 = 1;\n";
                     code += "    required.Arith.push_back(arithAction);\n";
                 }
             }
@@ -3242,13 +3601,21 @@ string generate(const json &rom, const string &functionName, const string &fileN
                 bool dbl = false;
                 if ( (!rom["program"][zkPC].contains("arithEq0") || (rom["program"][zkPC]["arithEq0"]==0)) &&
                      (rom["program"][zkPC].contains("arithEq1") && (rom["program"][zkPC]["arithEq1"]==1)) &&
-                     (!rom["program"][zkPC].contains("arithEq2") || (rom["program"][zkPC]["arithEq2"]==0)) )
+                     (!rom["program"][zkPC].contains("arithEq2") || (rom["program"][zkPC]["arithEq2"]==0)) &&
+                     (!rom["program"][zkPC].contains("arithEq3") || (rom["program"][zkPC]["arithEq3"]==0)) &&
+                     (!rom["program"][zkPC].contains("arithEq4") || (rom["program"][zkPC]["arithEq4"]==0)) &&
+                     (!rom["program"][zkPC].contains("arithEq5") || (rom["program"][zkPC]["arithEq5"]==0)) &&
+                     true)
                 {
                     dbl = false;
                 }
                 else if ( (!rom["program"][zkPC].contains("arithEq0") || (rom["program"][zkPC]["arithEq0"]==0)) &&
                           (!rom["program"][zkPC].contains("arithEq1") || (rom["program"][zkPC]["arithEq1"]==0)) &&
-                          (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) )
+                          (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) &&
+                          (!rom["program"][zkPC].contains("arithEq3") || (rom["program"][zkPC]["arithEq3"]==0)) &&
+                          (!rom["program"][zkPC].contains("arithEq4") || (rom["program"][zkPC]["arithEq4"]==0)) &&
+                          (!rom["program"][zkPC].contains("arithEq5") || (rom["program"][zkPC]["arithEq5"]==0)) &&
+                          true)
                 {
                     dbl = true;
                 }
@@ -3309,6 +3676,9 @@ string generate(const json &rom, const string &functionName, const string &fileN
                     code += "    arithAction.selEq1 = " + to_string(dbl?0:1) + ";\n";
                     code += "    arithAction.selEq2 = " + to_string(dbl?1:0) + ";\n";
                     code += "    arithAction.selEq3 = 1;\n";
+                    code += "    arithAction.selEq4 = 0;\n";
+                    code += "    arithAction.selEq5 = 0;\n";
+                    code += "    arithAction.selEq6 = 0;\n";
                     code += "    required.Arith.push_back(arithAction);\n";
                 }
             }
@@ -3750,6 +4120,58 @@ string generate(const json &rom, const string &functionName, const string &fileN
                     code += "    required.Binary.push_back(binaryAction);\n";
                 }
             }
+            else if (rom["program"][zkPC]["binOpcode"] == 8) // LT4
+            {
+                code += "    // Binary instruction: LT4\n";
+
+                code += "    if (!fea2scalar(fr, a, pols.A0[" + string(bFastMode?"0":"i") + "], pols.A1[" + string(bFastMode?"0":"i") + "], pols.A2[" + string(bFastMode?"0":"i") + "], pols.A3[" + string(bFastMode?"0":"i") + "], pols.A4[" + string(bFastMode?"0":"i") + "], pols.A5[" + string(bFastMode?"0":"i") + "], pols.A6[" + string(bFastMode?"0":"i") + "], pols.A7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.A)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, b, pols.B0[" + string(bFastMode?"0":"i") + "], pols.B1[" + string(bFastMode?"0":"i") + "], pols.B2[" + string(bFastMode?"0":"i") + "], pols.B3[" + string(bFastMode?"0":"i") + "], pols.B4[" + string(bFastMode?"0":"i") + "], pols.B5[" + string(bFastMode?"0":"i") + "], pols.B6[" + string(bFastMode?"0":"i") + "], pols.B7[" + string(bFastMode?"0":"i") + "]))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(pols.B)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    if (!fea2scalar(fr, c, op0, op1, op2, op3, op4, op5, op6, op7))\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_FEA2SCALAR;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Failed calling fea2scalar(op)\");\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    expectedC = lt4(a, b);\n";
+                code += "    if (c != expectedC)\n";
+                code += "    {\n";
+                code += "        proverRequest.result = ZKR_SM_MAIN_BINARY_LT4_MISMATCH;\n";
+                code += "        zkPC=" + to_string(zkPC) +";\n";
+                code += "        mainExecutor.logError(ctx, \"Binary LT4 operation does not match c=op=\" + c.get_str(16) + \" expectedC=(a^b)=\" + expectedC.get_str(16));\n";
+                code += "        mainExecutor.pHashDB->cancelBatch(proverRequest.uuid);\n";
+                code += "        return;\n";
+                code += "    }\n";
+                code += "    pols.carry[" + string(bFastMode?"0":"i") + "] = fr.fromScalar(c);\n";
+
+                if (!bFastMode)
+                {
+                    code += "    pols.binOpcode[i] = fr.fromU64(8);\n";
+
+                    code += "    // Store the binary action to execute it later with the binary SM\n";
+                    code += "    binaryAction.a = a;\n";
+                    code += "    binaryAction.b = b;\n";
+                    code += "    binaryAction.c = c;\n";
+                    code += "    binaryAction.opcode = 8;\n";
+                    code += "    binaryAction.type = 1;\n";
+                    code += "    required.Binary.push_back(binaryAction);\n";
+                }
+            }
             else
             {
                 cerr << "Error: Invalid binary operation opcode=" << rom["program"][zkPC]["binOpcode"] << " zkPC=" << zkPC << endl;
@@ -4019,7 +4441,11 @@ string generate(const json &rom, const string &functionName, const string &fileN
         // If arith, increment pols.cntArith
         if ( (rom["program"][zkPC].contains("arithEq0") && (rom["program"][zkPC]["arithEq0"]==1)) ||
              (rom["program"][zkPC].contains("arithEq1") && (rom["program"][zkPC]["arithEq1"]==1)) ||
-             (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) )
+             (rom["program"][zkPC].contains("arithEq2") && (rom["program"][zkPC]["arithEq2"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq3") && (rom["program"][zkPC]["arithEq3"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq4") && (rom["program"][zkPC]["arithEq4"]==1)) ||
+             (rom["program"][zkPC].contains("arithEq5") && (rom["program"][zkPC]["arithEq5"]==1)) ||
+             false)
         {
             code += "    if (!proverRequest.input.bNoCounters)\n";
             code += "    {\n";
@@ -4516,30 +4942,30 @@ string generate(const json &rom, const string &functionName, const string &fileN
             code += "    }\n\n";
         }
 
-        code += "#ifdef LOG_COMPLETED_STEPS\n";
-        code += "    zklog.info( \"<-- Completed step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) + " op=\" + fr.toString(op7,16) + \":\" + fr.toString(op6,16) + \":\" + fr.toString(op5,16) + \":\" + fr.toString(op4,16) + \":\" + fr.toString(op3,16) + \":\" + fr.toString(op2,16) + \":\" + fr.toString(op1,16) + \":\" + fr.toString(op0,16) + \" ABCDE0=\" + fr.toString(pols.A0[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B0[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C0[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D0[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E0[" + string(bFastMode?"0":"i") + "],16) + \" FREE0:7=\" + fr.toString(fi0,16) + \":\" + fr.toString(fi7,16) + \" addr=\" + to_string(addr));\n";
-        /*code += "    zklog.info(\"<-- Completed step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) +
-                " op=\" + fr.toString(op7,16) + \":\" + fr.toString(op6,16) + \":\" + fr.toString(op5,16) + \":\" + fr.toString(op4,16) + \":\" + fr.toString(op3,16) + \":\" + fr.toString(op2,16) + \":\" + fr.toString(op1,16) + \":\" + fr.toString(op0,16) + \"" +
-                " A=\" + fr.toString(pols.A7[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A6[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A5[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A4[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A3[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A2[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A1[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.A0[" + string(bFastMode?"0":"i") + "],16) + \"" +
-                " B=\" + fr.toString(pols.B7[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B6[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B5[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B4[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B3[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B2[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B1[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.B0[" + string(bFastMode?"0":"i") + "],16) + \"" +
-                " C=\" + fr.toString(pols.C7[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C6[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C5[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C4[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C3[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C2[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C1[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.C0[" + string(bFastMode?"0":"i") + "],16) + \"" +
-                " D=\" + fr.toString(pols.D7[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D6[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D5[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D4[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D3[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D2[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D1[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.D0[" + string(bFastMode?"0":"i") + "],16) + \"" +
-                " E=\" + fr.toString(pols.E7[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E6[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E5[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E4[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E3[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E2[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E1[" + string(bFastMode?"0":"i") + "],16) + \":\" + fr.toString(pols.E0[" + string(bFastMode?"0":"i") + "],16) + \"" +
-                " FREE0:7=\" + fr.toString(fi0,16) + \":\" + fr.toString(fi7],16) + \" addr=\" + to_string(addr));\n";*/
-        code += "#endif\n";
-        code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
-        code += "    outfile.open(\"c.txt\", std::ios_base::app); // append instead of overwrite\n";
-        code += "    outfile << \"<-- Completed step=\" << i << \" zkPC=" + to_string(zkPC) + " op=\" << fr.toString(op7,16) << \":\" << fr.toString(op6,16) << \":\" << fr.toString(op5,16) << \":\" << fr.toString(op4,16) << \":\" << fr.toString(op3,16) << \":\" << fr.toString(op2,16) << \":\" << fr.toString(op1,16) << \":\" << fr.toString(op0,16) << \" ABCDE0=\" << fr.toString(pols.A0[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B0[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C0[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D0[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E0[" + string(bFastMode?"0":"i") + "],16) << \" FREE0:7=\" << fr.toString(fi0,16) << \":\" << fr.toString(fi7,16) << \" addr=\" << addr << endl;\n";
-        /*code += "    outfile << \"<-- Completed step=\" << i << \" zkPC=" + to_string(zkPC) +
-                " op=\" << fr.toString(op7,16) << \":\" << fr.toString(op6,16) << \":\" << fr.toString(op5,16) << \":\" << fr.toString(op4,16) << \":\" << fr.toString(op3,16) << \":\" << fr.toString(op2,16) << \":\" << fr.toString(op1,16) << \":\" << fr.toString(op0,16) << \"" +
-                " A=\" << fr.toString(pols.A7[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A6[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A5[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A4[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A3[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A2[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A1[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.A0[" + string(bFastMode?"0":"i") + "],16) << \"" +
-                " B=\" << fr.toString(pols.B7[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B6[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B5[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B4[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B3[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B2[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B1[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.B0[" + string(bFastMode?"0":"i") + "],16) << \"" +
-                " C=\" << fr.toString(pols.C7[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C6[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C5[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C4[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C3[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C2[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C1[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.C0[" + string(bFastMode?"0":"i") + "],16) << \"" +
-                " D=\" << fr.toString(pols.D7[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D6[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D5[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D4[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D3[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D2[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D1[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.D0[" + string(bFastMode?"0":"i") + "],16) << \"" +
-                " E=\" << fr.toString(pols.E7[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E6[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E5[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E4[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E3[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E2[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E1[" + string(bFastMode?"0":"i") + "],16) << \":\" << fr.toString(pols.E0[" + string(bFastMode?"0":"i") + "],16) << \"" +
-                " FREE0:7=\" << fr.toString(fi0,16) << \":\" << fr.toString(fi7,16) << \" addr=\" << addr << endl;\n";*/
-        code += "    outfile.close();\n";
-        code += "#endif\n\n";
+//        code += "#ifdef LOG_COMPLETED_STEPS\n";
+//        code += "    zklog.info( \"<-- Completed step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) + " op=\" + fr.toString(op7,16) + \":\" + fr.toString(op6,16) + \":\" + fr.toString(op5,16) + \":\" + fr.toString(op4,16) + \":\" + fr.toString(op3,16) + \":\" + fr.toString(op2,16) + \":\" + fr.toString(op1,16) + \":\" + fr.toString(op0,16) + \" ABCDE0=\" + fr.toString(pols.A0[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B0[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C0[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D0[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E0[" + string(bFastMode?"0":"nexti") + "],16) + \" FREE0:7=\" + fr.toString(fi0,16) + \":\" + fr.toString(fi7,16) + \" addr=\" + to_string(addr));\n";
+//        /*code += "    zklog.info(\"<-- Completed step=\" + to_string(i) + \" zkPC=" + to_string(zkPC) +
+//                " op=\" + fr.toString(op7,16) + \":\" + fr.toString(op6,16) + \":\" + fr.toString(op5,16) + \":\" + fr.toString(op4,16) + \":\" + fr.toString(op3,16) + \":\" + fr.toString(op2,16) + \":\" + fr.toString(op1,16) + \":\" + fr.toString(op0,16) + \"" +
+//                " A=\" + fr.toString(pols.A7[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A6[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A5[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A4[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A3[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A2[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A1[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.A0[" + string(bFastMode?"0":"nexti") + "],16) + \"" +
+//                " B=\" + fr.toString(pols.B7[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B6[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B5[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B4[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B3[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B2[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B1[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.B0[" + string(bFastMode?"0":"nexti") + "],16) + \"" +
+//                " C=\" + fr.toString(pols.C7[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C6[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C5[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C4[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C3[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C2[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C1[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.C0[" + string(bFastMode?"0":"nexti") + "],16) + \"" +
+//                " D=\" + fr.toString(pols.D7[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D6[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D5[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D4[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D3[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D2[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D1[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.D0[" + string(bFastMode?"0":"nexti") + "],16) + \"" +
+//                " E=\" + fr.toString(pols.E7[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E6[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E5[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E4[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E3[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E2[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E1[" + string(bFastMode?"0":"nexti") + "],16) + \":\" + fr.toString(pols.E0[" + string(bFastMode?"0":"nexti") + "],16) + \"" +
+//                " FREE0:7=\" + fr.toString(fi0,16) + \":\" + fr.toString(fi7],16) + \" addr=\" + to_string(addr));\n";*/
+//        code += "#endif\n";
+//        code += "#ifdef LOG_COMPLETED_STEPS_TO_FILE\n";
+//        code += "    outfile.open(\"c.txt\", std::ios_base::app); // append instead of overwrite\n";
+//        code += "    outfile << \"<-- Completed step=\" << i << \" zkPC=" + to_string(zkPC) + " op=\" << fr.toString(op7,16) << \":\" << fr.toString(op6,16) << \":\" << fr.toString(op5,16) << \":\" << fr.toString(op4,16) << \":\" << fr.toString(op3,16) << \":\" << fr.toString(op2,16) << \":\" << fr.toString(op1,16) << \":\" << fr.toString(op0,16) << \" ABCDE0=\" << fr.toString(pols.A0[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B0[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C0[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D0[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E0[" + string(bFastMode?"0":"nexti") + "],16) << \" FREE0:7=\" << fr.toString(fi0,16) << \":\" << fr.toString(fi7,16) << \" addr=\" << addr << endl;\n";
+//        /*code += "    outfile << \"<-- Completed step=\" << i << \" zkPC=" + to_string(zkPC) +
+//                " op=\" << fr.toString(op7,16) << \":\" << fr.toString(op6,16) << \":\" << fr.toString(op5,16) << \":\" << fr.toString(op4,16) << \":\" << fr.toString(op3,16) << \":\" << fr.toString(op2,16) << \":\" << fr.toString(op1,16) << \":\" << fr.toString(op0,16) << \"" +
+//                " A=\" << fr.toString(pols.A7[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A6[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A5[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A4[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A3[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A2[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A1[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.A0[" + string(bFastMode?"0":"nexti") + "],16) << \"" +
+//                " B=\" << fr.toString(pols.B7[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B6[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B5[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B4[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B3[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B2[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B1[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.B0[" + string(bFastMode?"0":"nexti") + "],16) << \"" +
+//                " C=\" << fr.toString(pols.C7[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C6[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C5[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C4[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C3[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C2[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C1[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.C0[" + string(bFastMode?"0":"nexti") + "],16) << \"" +
+//                " D=\" << fr.toString(pols.D7[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D6[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D5[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D4[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D3[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D2[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D1[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.D0[" + string(bFastMode?"0":"nexti") + "],16) << \"" +
+//                " E=\" << fr.toString(pols.E7[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E6[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E5[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E4[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E3[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E2[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E1[" + string(bFastMode?"0":"nexti") + "],16) << \":\" << fr.toString(pols.E0[" + string(bFastMode?"0":"nexti") + "],16) << \"" +
+//                " FREE0:7=\" << fr.toString(fi0,16) << \":\" << fr.toString(fi7,16) << \" addr=\" << addr << endl;\n";*/
+//        code += "    outfile.close();\n";
+//        code += "#endif\n\n";
 
         // Jump to the end label if we are done and we are in fast mode
         if (zkPC == rom["labels"]["finalizeExecution"])
@@ -4906,10 +5332,12 @@ string selectorConst (int64_t CONST, bool opInitialized, bool bFastMode)
     code += "    // op0 = op0 + CONST\n";
 
     string value = "";
-    if (CONST > 0)
+    string valueCopy;
+    if (CONST >= 0)
         value += "fr.fromU64(" + to_string(CONST) + ")";
     else
         value += "fr.neg(fr.fromU64(" + to_string(-CONST) + "))";
+    valueCopy = value;
     if (opInitialized)
         value = "fr.add(op0, " + value + ")";
     code += "    op0 = " + value + ";\n";
@@ -4919,7 +5347,9 @@ string selectorConst (int64_t CONST, bool opInitialized, bool bFastMode)
             code += "    op" + to_string(j) + " = fr.zero();\n";
         }
     if (!bFastMode)
-        code += "    pols.CONST0[i] = fr.fromS32(" + to_string(CONST) + ");\n\n";
+    {
+        code += "    pols.CONST0[i] = " + valueCopy + ";\n\n";
+    }
     code += "\n";
     return code;
 }
@@ -4933,7 +5363,14 @@ string selectorConstL (const string &CONSTL, bool opInitialized, bool bFastMode)
 
     for (uint64_t j=0; j<8; j++) // TODO: Should we ADD it, not just copy it?
     {
-        code += "    op" + to_string(j) + " = fr.fromU64(" + to_string(op[j]) + ");\n";
+        if (opInitialized)
+        {
+            code += "    op" + to_string(j) + " = fr.add(op" + to_string(j) + ", fr.fromU64(" + to_string(op[j]) + "));\n";
+        }
+        else
+        {
+            code += "    op" + to_string(j) + " = fr.fromU64(" + to_string(op[j]) + ");\n";
+        }
     }
 
     if (!bFastMode)

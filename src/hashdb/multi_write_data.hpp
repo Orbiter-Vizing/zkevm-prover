@@ -46,6 +46,48 @@ public:
                (nodesStateRoot.size() == 0);
     }
 
+    string GetMemoryUsage (void) {
+        string content = "{ ";
+        size_t nodesMemUsage = sizeof(nodes);
+        nodesMemUsage += nodes.bucket_count() * sizeof(void*);
+        for (const auto& pair : nodes) {
+            nodesMemUsage += sizeof(pair.first) + pair.first.capacity();
+            nodesMemUsage += sizeof(pair.second) + pair.second.capacity();
+        }
+        content += "nodes=" + to_string(double(nodesMemUsage)/1024) + "Kb, ";
+
+        size_t nodesIntrayMemUsage = sizeof(nodesIntray);
+        nodesIntrayMemUsage += nodesIntray.bucket_count() * sizeof(void*);
+        for (const auto& pair : nodesIntray) {
+            nodesIntrayMemUsage += sizeof(pair.first) + pair.first.capacity();
+            nodesIntrayMemUsage += sizeof(pair.second) + pair.second.capacity();
+        }
+        content += "nodesIntray=" + to_string(double(nodesIntrayMemUsage)/1024) + "Kb, ";
+
+        size_t programMemUsage = sizeof(program);
+        programMemUsage += program.bucket_count() * sizeof(void*);
+        for (const auto& pair : program) {
+            programMemUsage += sizeof(pair.first) + pair.first.capacity();
+            programMemUsage += sizeof(pair.second) + pair.second.capacity();
+        }
+        content += "program=" + to_string(double(programMemUsage)/1024) + "Kb, ";
+
+        size_t programIntrayMemUsage = sizeof(programIntray);
+        programIntrayMemUsage += programIntray.bucket_count() * sizeof(void*);
+        for (const auto& pair : programIntray) {
+            programIntrayMemUsage += sizeof(pair.first) + pair.first.capacity();
+            programIntrayMemUsage += sizeof(pair.second) + pair.second.capacity();
+        }
+        content += "programIntray=" + to_string(double(programIntrayMemUsage)/1024) + "Kb, ";
+
+        content += "multiQuery=" + to_string(double(multiQuery.size())/1024) + "Kb, ";
+
+        auto memSize = nodesMemUsage + nodesIntrayMemUsage + programMemUsage + programIntrayMemUsage + multiQuery.size();
+        content += "totalMem=" + to_string(double(memSize)/1024) + "Kb }";
+
+        return content;
+    }
+
     void acceptIntray (bool bSenderCalling = false)
     {
         if (programIntray.size() > 0)

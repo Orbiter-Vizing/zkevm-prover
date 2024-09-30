@@ -771,7 +771,7 @@ zkresult StateManager::flush (const string &batchUUID, const string &_newStateRo
     
     // Delete this batch UUID state
     state.erase(it);
-
+//    print();
     Unlock();
 
     //TimerStopAndLog(STATE_MANAGER_FLUSH);
@@ -784,7 +784,7 @@ void StateManager::print (bool bDbContent)
     uint64_t totalDbWrites[PERSISTENCE_SIZE] = {0, 0, 0};
     uint64_t totalDbDeletes[PERSISTENCE_SIZE] = {0, 0, 0};
     zklog.info("StateManager::print():");
-    zklog.info("state.size=" + to_string(state.size()));
+    zklog.info("state.size=" + to_string(state.size()) + " stateMemSize=" + to_string(sizeof(state)));
     unordered_map<string, BatchState>::const_iterator stateIt;
     uint64_t batchStateCounter = 0;
     for (stateIt = state.begin(); stateIt != state.end(); stateIt++)
@@ -796,29 +796,29 @@ void StateManager::print (bool bDbContent)
         zklog.info("  oldStateRoot=" + batchState.oldStateRoot);
         zklog.info("  currentStateRoot=" + batchState.currentStateRoot);
         zklog.info("  currentTx=" + to_string(batchState.currentTx));
-
+        zklog.info("  --------------------------------------------------");
         for (uint64_t tx=0; tx<batchState.txState.size(); tx++)
         {
 
-            zklog.info("    TX=" + to_string(tx));
+//            zklog.info("    TX=" + to_string(tx));
             const TxState &txState = batchState.txState[tx];
 
             for (uint64_t persistence = 0; persistence < PERSISTENCE_SIZE; persistence++)
             {
-                zklog.info("      persistence=" + to_string(persistence) + "=" + persistence2string((Persistence)persistence));
-                zklog.info("        oldStateRoot=" + txState.persistence[persistence].oldStateRoot);
-                zklog.info("        newStateRoot=" + txState.persistence[persistence].newStateRoot);
-                zklog.info("        currentSubState=" + to_string(txState.persistence[persistence].currentSubState));
-                zklog.info("        txSubState.size=" + to_string(txState.persistence[persistence].subState.size()));
+//                zklog.info("      persistence=" + to_string(persistence) + "=" + persistence2string((Persistence)persistence));
+//                zklog.info("        oldStateRoot=" + txState.persistence[persistence].oldStateRoot);
+//                zklog.info("        newStateRoot=" + txState.persistence[persistence].newStateRoot);
+//                zklog.info("        currentSubState=" + to_string(txState.persistence[persistence].currentSubState));
+//                zklog.info("        txSubState.size=" + to_string(txState.persistence[persistence].subState.size()));
                 for (uint64_t i=0; i<txState.persistence[persistence].subState.size(); i++)
                 {
                     const TxSubState &txSubState = txState.persistence[persistence].subState[i];
-                    zklog.info("          txSubState=" + to_string(i));
-                    zklog.info("            oldStateRoot=" + txSubState.oldStateRoot);
-                    zklog.info("            newStateRoot=" + txSubState.newStateRoot);
-                    zklog.info("            valid=" + to_string(txSubState.bValid));
-                    zklog.info("            previousSubState=" + to_string(txSubState.previousSubState));
-                    zklog.info("            dbWrite.size=" + to_string(txSubState.dbWrite.size()));
+//                    zklog.info("          txSubState=" + to_string(i));
+//                    zklog.info("            oldStateRoot=" + txSubState.oldStateRoot);
+//                    zklog.info("            newStateRoot=" + txSubState.newStateRoot);
+//                    zklog.info("            valid=" + to_string(txSubState.bValid));
+//                    zklog.info("            previousSubState=" + to_string(txSubState.previousSubState));
+//                    zklog.info("            dbWrite.size=" + to_string(txSubState.dbWrite.size()));
 
                     totalDbWrites[persistence] += txSubState.dbWrite.size();
                     if (bDbContent)
@@ -829,13 +829,13 @@ void StateManager::print (bool bDbContent)
                             zklog.info("              " + dbIt->first);
                         }
                     }
-                    zklog.info("            dbDelete.size=" + to_string(txSubState.dbDelete.size()));
+//                    zklog.info("            dbDelete.size=" + to_string(txSubState.dbDelete.size()));
                     totalDbDeletes[persistence] += txSubState.dbDelete.size();
                     if (bDbContent)
                     {
                         for (uint64_t j=0; j<txSubState.dbDelete.size(); j++)
                         {
-                            zklog.info("              " + txSubState.dbDelete[j]);
+//                            zklog.info("              " + txSubState.dbDelete[j]);
                         }
                     }
                 }

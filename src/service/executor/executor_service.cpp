@@ -699,7 +699,8 @@ using grpc::Status;
     response->set_pending_to_flush_program(pendingToFlushProgram);
     response->set_storing_nodes(storingNodes);
     response->set_storing_program(storingProgram);
-    response->set_prover_id(proverId);
+//    response->set_prover_id(proverId);
+    response->set_prover_id(config.proverID);
 
     return Status::OK;
 }
@@ -872,7 +873,7 @@ using grpc::Status;
     case ZKR_SM_MAIN_OUT_OF_STEPS:                          return ::executor::v1::EXECUTOR_ERROR_SM_MAIN_COUNTERS_OVERFLOW_STEPS;
     case ZKR_SM_MAIN_HASHK_READ_OUT_OF_RANGE:               return ::executor::v1::EXECUTOR_ERROR_SM_MAIN_HASHK_READ_OUT_OF_RANGE;
     case ZKR_SM_MAIN_HASHP_READ_OUT_OF_RANGE:               return ::executor::v1::EXECUTOR_ERROR_SM_MAIN_HASHP_READ_OUT_OF_RANGE;
-
+    case ZKR_SM_MAIN_BINARY_LT4_MISMATCH:                   return ::executor::v1::EXECUTOR_ERROR_SM_MAIN_BINARY_LT_MISMATCH;
     default:                                                return ::executor::v1::EXECUTOR_ERROR_UNSPECIFIED;
     }
 }

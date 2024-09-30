@@ -32,6 +32,7 @@ public:
     void Unlock(void) { pthread_mutex_unlock(&mutex); };
     bool IsEmpty(void) { return data[0].IsEmpty() && data[1].IsEmpty() && data[2].IsEmpty(); };
     string print(void);
+    string mem(void);
 
     bool findNode(const string &key, vector<Goldilocks::Element> &value);
     bool findProgram(const string &key, vector<uint8_t> &value);

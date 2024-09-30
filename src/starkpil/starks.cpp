@@ -409,6 +409,7 @@ Polinomial *Starks::transposeH1H2Columns(void *pAddress, uint64_t &numCommited, 
 
     u_int64_t stride_pol0 = N * FIELD_EXTENSION + 8;
     uint64_t tot_pols0 = 4 * starkInfo.puCtx.size();
+    zklog.info("[DEBUG_LOG] Polinomial Starks::transposeH1H2Columns transPols ");
     Polinomial *transPols = new Polinomial[tot_pols0];
 
     assert(starkInfo.mapSectionsN.section[eSection::cm1_n] * NExtended * FIELD_EXTENSION >= 3 * tot_pols0 * N);
@@ -461,6 +462,7 @@ Polinomial *Starks::transposeZColumns(void *pAddress, uint64_t &numCommited, Gol
 
     u_int64_t stride_pol_ = N * FIELD_EXTENSION + 8; // assuming all polinomials have same degree
     uint64_t tot_pols = 3 * (starkInfo.puCtx.size() + starkInfo.peCtx.size() + starkInfo.ciCtx.size());
+    zklog.info("[DEBUG_LOG] Polinomial Starks::transposeZColumns newpols_ ");
     Polinomial *newpols_ = new Polinomial[tot_pols];
     assert(starkInfo.mapSectionsN.section[eSection::cm1_n] * NExtended * FIELD_EXTENSION >= tot_pols * stride_pol_);
 

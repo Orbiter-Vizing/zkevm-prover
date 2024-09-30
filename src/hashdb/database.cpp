@@ -1792,6 +1792,7 @@ void *dbSenderThread (void *arg)
             multiWrite.storedFlushId = multiWrite.lastFlushId;
 #ifdef LOG_DB_SENDER_THREAD
             zklog.info("dbSenderThread() found multi write processing data empty, so ignoring");
+            zklog.info("dbSenderThread() multiWrite memSize=[" + multiWrite.mem() + "]");
 #endif
             multiWrite.Unlock();
             continue;
@@ -1854,6 +1855,7 @@ void *dbSenderThread (void *arg)
                 sem_post(&pDatabase->getFlushDataSem);
 #ifdef LOG_DB_SENDER_THREAD
                 zklog.info("dbSenderThread() successfully called sem_post(&pDatabase->getFlushDataSem)");
+                zklog.info("dbSenderThread() multiWrite memSize=[" + multiWrite.mem() + "]");
 #endif
                 multiWrite.Unlock();
             }

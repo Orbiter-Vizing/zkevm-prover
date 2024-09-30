@@ -393,6 +393,7 @@ void *mapFileInternal(const string &fileName, uint64_t size, bool bOutput, bool 
         return pAddress;
 
     // Allocate memory
+    zklog.info("[DEBUG_LOG] utils mapFileInternal pMemAddress malloc() of size: " + to_string(size));
     void *pMemAddress = malloc(size);
     if (pMemAddress == NULL)
     {

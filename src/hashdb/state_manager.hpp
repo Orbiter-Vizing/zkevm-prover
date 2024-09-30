@@ -27,6 +27,10 @@ public:
         dbWrite.reserve(128);
         dbDelete.reserve(128);
     };
+    ~TxSubState() {
+        dbDelete.clear();
+        dbWrite.clear();
+    }
 };
 
 class TxPersistenceState
@@ -40,6 +44,9 @@ public:
     {
         subState.reserve(128);
     };
+    ~TxPersistenceState() {
+        subState.clear();
+    }
 };
 
 class TxState
@@ -64,6 +71,10 @@ public:
         txState.reserve(32);
         dbWrite.reserve(1024);
     };
+    ~BatchState() {
+        txState.clear();
+        dbWrite.clear();
+    }
 };
 
 class StateManager

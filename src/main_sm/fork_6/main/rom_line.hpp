@@ -30,6 +30,7 @@ public:
     Goldilocks::Element inGAS;
     Goldilocks::Element inSTEP;
     Goldilocks::Element inFREE;
+    Goldilocks::Element inFREE0;
     Goldilocks::Element inRR;
     Goldilocks::Element inHASHPOS;
     Goldilocks::Element inCntArith;
@@ -96,6 +97,9 @@ public:
     uint8_t arithEq0;
     uint8_t arithEq1;
     uint8_t arithEq2;
+    uint8_t arithEq3;
+    uint8_t arithEq4;
+    uint8_t arithEq5;
     uint8_t bin;
     uint8_t binOpcode;
     vector<RomCommand *> cmdAfter;

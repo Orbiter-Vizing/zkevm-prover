@@ -1434,8 +1434,8 @@ void ZkevmSteps::step42ns_parser_first(StepsParams &params, uint64_t nrows, uint
                }
           }
           assert(i_args == NARGS_);
-          delete (tmp1);
-          delete (tmp3);
+          delete[] tmp1;
+          delete[] tmp3;
      }
 }
 

@@ -22,9 +22,9 @@ ASFLAGS := -felf64
 
 # Debug build flags
 ifeq ($(dbg),1)
-      CXXFLAGS += -g -D DEBUG
+      CXXFLAGS += -g -D DEBUG -O3
 else
-      CXXFLAGS += -O3
+      CXXFLAGS += -O2
 endif
 
 # Verify if AVX-512 is supported

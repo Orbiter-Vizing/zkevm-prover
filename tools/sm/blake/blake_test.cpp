@@ -50,7 +50,7 @@ void PerformanceTest (void)
     }
     TimerStopAndLog(AND_OPERATION);
 
-    delete(randomValues);
+    delete[] randomValues;
 }
 
 void PerformanceTestFE (void)
@@ -106,8 +106,8 @@ void PerformanceTestFE (void)
     }
     TimerStopAndLog(XOR_OPERATION_2);
 
-    delete(randomValuesFE);
-    delete(randomValues);
+    delete[] randomValuesFE;
+    delete[] randomValues;
 }
 
 /********/

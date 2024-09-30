@@ -89,7 +89,7 @@ public:
         // Avoid unnecessary initialization if we are not going to generate any proof
         if (!config.generateProof())
             return;
-
+        std::cout << "[DEBUG_LOG] starkpil Starks()" << std::endl;
         // Allocate an area of memory, mapped to file, to read all the constant polynomials,
         // and create them using the allocated address
         TimerStart(LOAD_CONST_POLS_TO_MEMORY);

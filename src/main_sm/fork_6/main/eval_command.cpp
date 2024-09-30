@@ -17,6 +17,9 @@ namespace fork_6
 
 void evalCommand (Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
+#ifdef LOG_START_STEPS
+    zklog.info("--> evalCommand op=" + op2String(cmd.op) + ", function=" + to_string(cmd.function));
+#endif
     if (cmd.op == op_functionCall)
     {
         switch (cmd.function)
@@ -51,6 +54,13 @@ void evalCommand (Context &ctx, const RomCommand &cmd, CommandResult &cr)
             case f_memAlignWR_W1:                   return eval_memAlignWR_W1(ctx, cmd, cr);
             case f_memAlignWR8_W0:                  return eval_memAlignWR8_W0(ctx, cmd, cr);
             case f_beforeLast:                      return eval_beforeLast(ctx, cmd, cr);
+            case f_ARITH_BN254_ADDFP2:              return eval_ARITH_BN254_ADDFP2(ctx, cmd, cr);
+            case f_ARITH_BN254_SUBFP2:              return eval_ARITH_BN254_SUBFP2(ctx, cmd, cr);
+            case f_ARITH_BN254_MULFP2_X:            return eval_ARITH_BN254_MULFP2_X(ctx, cmd, cr);
+            case f_ARITH_BN254_MULFP2_Y:            return eval_ARITH_BN254_MULFP2_Y(ctx, cmd, cr);
+            case f_fp2InvBN254_x:                   return eval_fp2InvBN254_x(ctx, cmd, cr);
+            case f_fp2InvBN254_y:                   return eval_fp2InvBN254_y(ctx, cmd, cr);
+            case f_fpBN254inv:                      return eval_fpBN254inv(ctx, cmd, cr);
             default:
                 zklog.error("evalCommand() found invalid function=" + to_string(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
                 exitProcess();
@@ -1054,11 +1064,11 @@ void eval_if (Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check number of values
-    if (cmd.values.size() != 3)
-    {
-        zklog.error("eval_if() found invalid number of values=" + to_string(cmd.values.size()) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.values.size() != 3)
+{
+    zklog.error("eval_if() found invalid number of values=" + to_string(cmd.values.size()) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     evalCommand(ctx, *cmd.values[0], cr);
@@ -1104,7 +1114,12 @@ void eval_if (Context &ctx, const RomCommand &cmd, CommandResult &cr)
 void eval_getMemValue (Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
     cr.type = crt_scalar;
-    Fea fea = ctx.mem[cmd.offset];
+    uint64_t addr = cmd.offset;
+    if (cmd.useCTX == 1)
+    {
+        addr += ctx.fr.toU64(ctx.pols.CTX[*ctx.pStep]) * 0x40000;
+    }
+    Fea fea = ctx.mem[addr];
     if (!fea2scalar(ctx.fr, cr.scalar, fea.fe0, fea.fe1, fea.fe2, fea.fe3, fea.fe4, fea.fe5, fea.fe6, fea.fe7))
     {
         cr.zkResult = ZKR_SM_MAIN_FEA2SCALAR;
@@ -1120,11 +1135,11 @@ void eval_getGlobalExitRoot(Context &ctx, const RomCommand &cmd, CommandResult &
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() != 0)
-    {
-        zklog.error("eval_getGlobalExitRoot() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() != 0)
+{
+    zklog.error("eval_getGlobalExitRoot() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     // Return ctx.proverRequest.input.publicInputs.globalExitRoot as a field element array
@@ -1136,11 +1151,11 @@ void eval_getSequencerAddr(Context &ctx, const RomCommand &cmd, CommandResult &c
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() != 0)
-    {
-        zklog.error("eval_getSequencerAddr() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() != 0)
+{
+    zklog.error("eval_getSequencerAddr() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     // Return ctx.proverRequest.input.publicInputs.sequencerAddr as a field element array
@@ -1152,11 +1167,11 @@ void eval_getTxsLen(Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() != 0)
-    {
-        zklog.error("eval_getTxsLen() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() != 0)
+{
+    zklog.error("eval_getTxsLen() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     // Return ctx.proverRequest.input.txsLen/2 as a field element array
@@ -1175,11 +1190,11 @@ void eval_getTxs(Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() != 2)
-    {
-        zklog.error("eval_getTxs() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() != 2)
+{
+    zklog.error("eval_getTxs() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     // Get offset by executing cmd.params[0]
@@ -1190,9 +1205,9 @@ void eval_getTxs(Context &ctx, const RomCommand &cmd, CommandResult &cr)
     }
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     if (cr.type != crt_scalar) {
-        zklog.error("eval_getTxs() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+    zklog.error("eval_getTxs() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
     uint64_t offset = cr.scalar.get_ui();
 
@@ -1204,10 +1219,10 @@ void eval_getTxs(Context &ctx, const RomCommand &cmd, CommandResult &cr)
     }
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     if (cr.type != crt_scalar)
-    {
-        zklog.error("eval_getTxs() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+{
+    zklog.error("eval_getTxs() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
     uint64_t len = cr.scalar.get_ui();
 
@@ -1224,11 +1239,11 @@ void eval_eventLog(Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() < 1)
-    {
-        zklog.error("eval_eventLog() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() < 1)
+{
+    zklog.error("eval_eventLog() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     zkassert(ctx.proverRequest.input.publicInputsExtended.publicInputs.forkID == 6); // fork_6
@@ -1250,11 +1265,11 @@ void eval_getTimestamp(Context &ctx, const RomCommand &cmd, CommandResult &cr)
 {
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     // Check parameters list size
-    if (cmd.params.size() != 0)
-    {
-        zklog.error("eval_getTimestamp() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+if (cmd.params.size() != 0)
+{
+    zklog.error("eval_getTimestamp() invalid number of parameters function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
 
     // Return ctx.proverRequest.input.publicInputs.timestamp as a field element array
@@ -1453,10 +1468,10 @@ void eval_bitwise_or (Context &ctx, const RomCommand &cmd, CommandResult &cr)
     }
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     if (cr.type != crt_scalar)
-    {
-        zklog.error("eval_bitwise_or() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+{
+    zklog.error("eval_bitwise_or() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
     mpz_class b = cr.scalar;
 
@@ -1909,10 +1924,10 @@ void eval_memAlignWR_W1 (Context &ctx, const RomCommand &cmd, CommandResult &cr)
     }
 #ifdef CHECK_EVAL_COMMAND_PARAMETERS
     if (cr.type != crt_scalar)
-    {
-        zklog.error("eval_memAlignWR_W1() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
-        exitProcess();
-    }
+{
+    zklog.error("eval_memAlignWR_W1() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+    exitProcess();
+}
 #endif
     mpz_class value = cr.scalar;
 
@@ -2485,6 +2500,428 @@ zkresult eval_addReadWriteAddress (Context &ctx, const mpz_class value)
         ctx.pols.A0[0], ctx.pols.A1[0], ctx.pols.A2[0], ctx.pols.A3[0], ctx.pols.A4[0], ctx.pols.A5[0], ctx.pols.A6[0], ctx.pols.A7[0],
         ctx.pols.B0[0], ctx.pols.B1[0], ctx.pols.B2[0], ctx.pols.B3[0], ctx.pols.B4[0], ctx.pols.B5[0], ctx.pols.B6[0], ctx.pols.B7[0],
         value);
+}
+
+void eval_ARITH_BN254_MULFP2_X (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 4)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_X() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get x1 by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_X() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x1;
+    fq.fromMpz(x1, cr.scalar.get_mpz_t());
+
+    // Get y1 by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_X() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element y1;
+    fq.fromMpz(y1, cr.scalar.get_mpz_t());
+
+    // Get x2 by executing cmd.params[2]
+    evalCommand(ctx, *cmd.params[2], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_X() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x2;
+    fq.fromMpz(x2, cr.scalar.get_mpz_t());
+
+    // Get y2 by executing cmd.params[3]
+    evalCommand(ctx, *cmd.params[3], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_X() 3 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element y2;
+    fq.fromMpz(y2, cr.scalar.get_mpz_t());
+
+    // Calculate the point coordinate: x1*x2 - y1*y2
+    RawFq::Element result;
+    result = fq.sub(fq.mul(x1, x2), fq.mul(y1, y2));
+
+    // Convert result to scalar
+    cr.type = crt_scalar;
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+void eval_ARITH_BN254_MULFP2_Y (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 4)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_Y() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get x1 by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_Y() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x1;
+    fq.fromMpz(x1, cr.scalar.get_mpz_t());
+
+    // Get y1 by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_Y() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element y1;
+    fq.fromMpz(y1, cr.scalar.get_mpz_t());
+
+    // Get x2 by executing cmd.params[2]
+    evalCommand(ctx, *cmd.params[2], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_Y() 2 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x2;
+    fq.fromMpz(x2, cr.scalar.get_mpz_t());
+
+    // Get y2 by executing cmd.params[3]
+    evalCommand(ctx, *cmd.params[3], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_MULFP2_Y() 3 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element y2;
+    fq.fromMpz(y2, cr.scalar.get_mpz_t());
+
+    // Calculate the point coordinate: x1*y2 + x2*y1
+    RawFq::Element result;
+    result = fq.add(fq.mul(x1, y2), fq.mul(x2, y1));
+
+    // Convert result to scalar
+    cr.type = crt_scalar;
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+void eval_ARITH_BN254_ADDFP2 (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 2)
+    {
+        zklog.error("eval_ARITH_BN254_ADDFP2() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get x1 by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_ADDFP2() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x1;
+    fq.fromMpz(x1, cr.scalar.get_mpz_t());
+
+    // Get x2 by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_ADDFP2() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x2;
+    fq.fromMpz(x2, cr.scalar.get_mpz_t());
+
+    // Calculate the point coordinate
+    RawFq::Element result;
+    result = fq.add(x1, x2);
+
+    // Convert result to scalar
+    cr.type = crt_scalar;
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+void eval_ARITH_BN254_SUBFP2 (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 2)
+    {
+        zklog.error("eval_ARITH_BN254_SUBFP2() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get x1 by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_SUBFP2() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x1;
+    fq.fromMpz(x1, cr.scalar.get_mpz_t());
+
+    // Get x2 by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_ARITH_BN254_SUBFP2() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element x2;
+    fq.fromMpz(x2, cr.scalar.get_mpz_t());
+
+    // Calculate the point coordinate
+    RawFq::Element result;
+    result = fq.sub(x1, x2);
+
+    // Convert result to scalar
+    cr.type = crt_scalar;
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+// Computes the "real" part of the inverse of the given Fp2 element.
+void eval_fp2InvBN254_x (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 2)
+    {
+        zklog.error("eval_fp2InvBN254_x() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get a by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_fp2InvBN254_x() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element a;
+    fq.fromMpz(a, cr.scalar.get_mpz_t());
+
+    // Get b by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_fp2InvBN254_x() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element b;
+    fq.fromMpz(b, cr.scalar.get_mpz_t());
+
+    // Calculate the denominator
+    RawFq::Element den;
+    den = fq.add(fq.mul(a, a), fq.mul(b, b));
+
+    // Calculate x
+    RawFq::Element result;
+    fq.div(result, a, den);
+
+    // Convert back to scalar
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+// Computes the "imaginary" part of the inverse of the given Fp2 element.
+void eval_fp2InvBN254_y (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 2)
+    {
+        zklog.error("eval_fp2InvBN254_y() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get a by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_fp2InvBN254_y() 0 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element a;
+    fq.fromMpz(a, cr.scalar.get_mpz_t());
+
+    // Get b by executing cmd.params[1]
+    evalCommand(ctx, *cmd.params[1], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_fp2InvBN254_y() 1 unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+    RawFq::Element b;
+    fq.fromMpz(b, cr.scalar.get_mpz_t());
+
+    // Calculate the denominator
+    RawFq::Element den;
+    den = fq.add(fq.mul(a, a), fq.mul(b, b));
+
+    // Calculate y
+    RawFq::Element result;
+    fq.div(result, fq.neg(b), den);
+
+    // Convert back to scalar
+    fq.toMpz(cr.scalar.get_mpz_t(), result);
+}
+
+// Computes the inverse of the given Fp element
+void eval_fpBN254inv (Context &ctx, const RomCommand &cmd, CommandResult &cr)
+{
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    // Check parameters list size
+    if (cmd.params.size() != 1)
+    {
+        zklog.error("eval_fpBN254inv() invalid number of parameters=" + to_string(cmd.params.size()) + " function " + function2String(cmd.function) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get a by executing cmd.params[0]
+    evalCommand(ctx, *cmd.params[0], cr);
+    if (cr.zkResult != ZKR_SUCCESS)
+    {
+        return;
+    }
+#ifdef CHECK_EVAL_COMMAND_PARAMETERS
+    if (cr.type != crt_scalar)
+    {
+        zklog.error("eval_fpBN254inv() unexpected command result type: " + to_string(cr.type) + " step=" + to_string(*ctx.pStep) + " zkPC=" + to_string(*ctx.pZKPC) + " line=" + ctx.rom.line[*ctx.pZKPC].toString(ctx.fr) + " uuid=" + ctx.proverRequest.uuid);
+        exitProcess();
+    }
+#endif
+
+    // Get the field element from the command result
+    RawFq::Element a;
+    fq.fromMpz(a, cr.scalar.get_mpz_t());
+
+    // Calculate the inverse of this field element
+    RawFq::Element aInv;
+    fq.inv(aInv, a);
+
+    // Convert back to scalar
+    fq.toMpz(cr.scalar.get_mpz_t(), aInv);
 }
 
 } // namespace

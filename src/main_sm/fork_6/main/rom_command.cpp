@@ -24,6 +24,7 @@ string RomCommand::toString (void) const
     if (reg != reg_empty) result += " regName=" + reg2string(reg);
     if (num != mpz_class(0)) result += " num=" + num.get_str(16);
     if (offset != 0) result += " offset=" + to_string(offset);
+    if (useCTX != 0) result += " useCTX=" + to_string(useCTX);
 
     for (uint64_t i=0; i<values.size(); i++)
     {
@@ -72,6 +73,22 @@ tFunction string2Function(string s)
     else if (s == "memAlignWR8_W0")                 return f_memAlignWR8_W0;
     else if (s == "onOpcode")                       return f_onOpcode;
     else if (s == "onUpdateStorage")                return f_onUpdateStorage;
+    else if (s == "MPdiv")                          return f_MPdiv;
+    else if (s == "MPdiv_short")                    return f_MPdiv_short;
+    else if (s == "receiveLenQuotient_short")       return f_receiveLenQuotient_short;
+    else if (s == "receiveQuotientChunk_short")     return f_receiveQuotientChunk_short;
+    else if (s == "receiveRemainderChunk_short")    return f_receiveRemainderChunk_short;
+    else if (s == "receiveLenRemainder")            return f_receiveLenRemainder;
+    else if (s == "receiveRemainderChunk")          return f_receiveRemainderChunk;
+    else if (s == "receiveLenQuotient")             return f_receiveLenQuotient;
+    else if (s == "receiveQuotientChunk")           return f_receiveQuotientChunk;
+    else if (s == "ARITH_BN254_ADDFP2")             return f_ARITH_BN254_ADDFP2;
+    else if (s == "ARITH_BN254_SUBFP2")             return f_ARITH_BN254_SUBFP2;
+    else if (s == "ARITH_BN254_MULFP2_X")           return f_ARITH_BN254_MULFP2_X;
+    else if (s == "ARITH_BN254_MULFP2_Y")           return f_ARITH_BN254_MULFP2_Y;
+    else if (s == "fp2InvBN254_x")                  return f_fp2InvBN254_x;
+    else if (s == "fp2InvBN254_y")                  return f_fp2InvBN254_y;
+    else if (s == "fpBN254inv")                     return f_fpBN254inv;
     else if (s == "")                               return f_empty;
     else {
         zklog.error("string2function() invalid string = " + s);
@@ -116,6 +133,22 @@ string function2String(tFunction f)
         case f_memAlignWR8_W0:                  return "memAlignWR8_W0";
         case f_onOpcode:                        return "onOpcode";
         case f_onUpdateStorage:                 return "onUpdateStorage";
+        case f_MPdiv:                           return "MPdiv";
+        case f_MPdiv_short:                     return "MPdiv_short";
+        case f_receiveLenQuotient_short:        return "receiveLenQuotient_short";
+        case f_receiveQuotientChunk_short:      return "receiveQuotientChunk_short";
+        case f_receiveRemainderChunk_short:     return "receiveRemainderChunk_short";
+        case f_receiveLenRemainder:             return "receiveLenRemainder";
+        case f_receiveRemainderChunk:           return "receiveRemainderChunk";
+        case f_receiveLenQuotient:              return "receiveLenQuotient";
+        case f_receiveQuotientChunk:            return "receiveQuotientChunk";
+        case f_ARITH_BN254_ADDFP2:              return "ARITH_BN254_ADDFP2";
+        case f_ARITH_BN254_SUBFP2:              return "ARITH_BN254_SUBFP2";
+        case f_ARITH_BN254_MULFP2_X:            return "ARITH_BN254_MULFP2_X";
+        case f_ARITH_BN254_MULFP2_Y:            return "ARITH_BN254_MULFP2_Y";
+        case f_fp2InvBN254_x:                   return "fp2InvBN254_x";
+        case f_fp2InvBN254_y:                   return "fp2InvBN254_y";
+        case f_fpBN254inv:                      return "fpBN254inv";
         case f_empty:                           return "";
         default:                                return "unknown";
     }
@@ -284,6 +317,7 @@ void parseRomCommand (RomCommand &cmd, json tag)
     if (tag.contains("offset") && tag["offset"].is_number()) { cmd.offset = tag["offset"]; }
     if (tag.contains("values")) parseRomCommandArray(cmd.values, tag["values"]);
     if (tag.contains("params")) parseRomCommandArray(cmd.params, tag["params"]);
+    if (tag.contains("useCTX")) cmd.useCTX = tag["useCTX"];
 
     // Build opAndVar string to be used in time statistics
     cmd.opAndFunction = op2String(cmd.op) + "[" + function2String(cmd.function) + "]";

@@ -1,0 +1,29 @@
+#FROM codefamer/zkevm-executor-base:v0.0.1 AS build
+
+#WORKDIR /usr/src/app
+
+#COPY ./src ./src
+#COPY ./test ./test
+#COPY ./tools ./tools
+#COPY Makefile .
+#RUN make -j100 VERBOSE=1
+
+
+FROM codefamer/zkevm-executor-base:v0.0.1
+
+WORKDIR /app
+#COPY ./testvectors ./testvectors
+COPY ./config/config.json ./config/config.json
+COPY ./config/config_executor.json ./config/config_executor.json
+COPY ./config/scripts ./config/scripts
+COPY ./src/main_sm/fork_1/scripts/rom.json ./src/main_sm/fork_1/scripts/rom.json
+COPY ./src/main_sm/fork_2/scripts/rom.json ./src/main_sm/fork_2/scripts/rom.json
+COPY ./src/main_sm/fork_3/scripts/rom.json ./src/main_sm/fork_3/scripts/rom.json
+COPY ./src/main_sm/fork_4/scripts/rom.json ./src/main_sm/fork_4/scripts/rom.json
+COPY ./src/main_sm/fork_5/scripts/rom.json ./src/main_sm/fork_5/scripts/rom.json
+COPY ./src/main_sm/fork_6/scripts/rom.json ./src/main_sm/fork_6/scripts/rom.json
+COPY ./build/zkProver /usr/local/bin/zkProver
+#COPY --from=build /usr/src/app/build/zkProver /usr/local/bin/zkProver
+
+ENTRYPOINT []
+

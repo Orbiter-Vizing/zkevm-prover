@@ -9,7 +9,7 @@ COPY ./test ./test
 COPY ./tools ./tools
 COPY ./config ./config
 COPY Makefile .
-RUN make -j
+RUN make -j dbg=1
 
 FROM ubuntu:22.04
 

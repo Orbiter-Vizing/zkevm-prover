@@ -82,7 +82,7 @@ bool DatabaseCache::findKey(const string &key, DatabaseCacheRecord* &record)
 
     if (attempts%1000000 == 0)
     {
-        zklog.info("DatabaseCache::addKeyValue() name=" + name + " count=" + to_string(cacheMap.size()) + " maxSize=" + to_string(maxSize) + " currentSize=" + to_string(currentSize) + " attempts=" + to_string(attempts) + " hits=" + to_string(hits) + " hit ratio=" + to_string(double(hits)*100.0/double(zkmax(attempts,1))) + "%");
+        zklog.info("DatabaseCache::addKeyValue() name=" + name + " count=" + to_string(cacheMap.size()) + " maxSize=" + to_string(maxSize) + " currentSize=" + to_string(currentSize) + " memSize=" + to_string(sizeof(cacheMap)) + " attempts=" + to_string(attempts) + " hits=" + to_string(hits) + " hit ratio=" + to_string(double(hits)*100.0/double(zkmax(attempts,1))) + "%");
     }
     
     unordered_map<string, DatabaseCacheRecord*>::iterator it = cacheMap.find(key);
