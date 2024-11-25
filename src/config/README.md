@@ -116,6 +116,16 @@ The configuration parameters can be of different uses:
 |`recursive1StarkInfo`|production|string|Recursive 1 STARK info file|config + "/recursive1/recursive1.starkinfo.json"|RECURSIVE1_STARK_INFO|
 |`recursive2StarkInfo`|production|string|Recursive 2 STARK info file|config + "/recursive2/recursive2.starkinfo.json"|RECURSIVE2_STARK_INFO|
 |`recursivefStarkInfo`|production|string|Recursive final STARK info file|config + "/recursivef/recursivef.starkinfo.json"|RECURSIVEF_STARK_INFO|
+|`zkevmCHelpers`|production|string|zkEVM STARK chelpers binary file|config + "/zkevm/zkevm.chelpers.bin"|ZKEVM_CHELPERS|
+|`c12aCHelpers`|production|string|C12a STARK chelpers binary file|config + "/c12a/c12a.chelpers.bin"|C12A_CHELPERS|
+|`recursive1CHelpers`|production|string|Recursive1 STARK chelpers binary file|config + "/recursive1/recursive1.chelpers.bin"|RECURSIVE1_CHELPERS|
+|`recursive2CHelpers`|production|string|Recursive2 STARK chelpers binary file|config + "/recursive2/recursive2.chelpers.bin"|RECURSIVE2_CHELPERS|
+|`recursivefCHelpers`|production|string|RecursiveF STARK chelpers binary file|config + "/recursivef/recursivef.chelpers.bin"|RECURSIVEF_CHELPERS|
+|`zkevmGenericCHelpers`|production|string|zkEVM STARK generic chelpers binary file|config + "/zkevm/zkevm.chelpers_generic.bin"|ZKEVM_GENERIC_CHELPERS|
+|`c12aGenericCHelpers`|production|string|C12a STARK generic chelpers binary file|config + "/c12a/c12a.chelpers_generic.bin"|C12A_GENERIC_CHELPERS|
+|`recursive1GenericCHelpers`|production|string|Recursive1 STARK generic chelpers binary file|config + "/recursive1/recursive1.chelpers_generic.bin"|RECURSIVE1_GENERIC_CHELPERS|
+|`recursive2GenericCHelpers`|production|string|Recursive2 STARK generic chelpers binary file|config + "/recursive2/recursive2.chelpers_generic.bin"|RECURSIVE2_GENERIC_CHELPERS|
+|`recursivefGenericCHelpers`|production|string|RecursiveF STARK generic chelpers binary file|config + "/recursivef/recursivef.chelpers_generic.bin"|RECURSIVEF_GENERIC_CHELPERS|
 |`finalVerkey`|production|string|Final verification key file|config + "/final/final.fflonk.verkey.json"|FINAL_VERKEY|
 |`zkevmVerifier`|production|string|zkEVM verifier data file|config + "/zkevm/zkevm.verifier.dat"|ZKEVM_VERIFIER|
 |`zkevmVerkey`|production|string|ZKEVM verification key file|config + "/zkevm/zkevm.verkey.json"|ZKEVM_VERKEY|

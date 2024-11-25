@@ -1,5 +1,5 @@
-#ifndef __CIRCOM_RECURSIVE_F_H
-#define __CIRCOM_RECURSIVE_F_H
+#ifndef __CIRCOM_RECURSIVE_F_2_H
+#define __CIRCOM_RECURSIVE_F_2_H
 
 #include <map>
 #include <gmp.h>

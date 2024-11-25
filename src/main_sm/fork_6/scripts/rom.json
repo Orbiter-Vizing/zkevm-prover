@@ -533,7 +533,7 @@
    "lineStr": "        B + 1 + %MIN_CNT_KECCAK_BATCH => B      :MSTORE(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2258",
+   "CONST": "9029",
    "inCntKeccakF": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -1934,7 +1934,7 @@
    "lineStr": "        $ => D                                          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inD": "-1",
    "JMPN": 1,
@@ -2203,7 +2203,7 @@
    "lineStr": "        $ => D                          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inB": "-1",
    "inD": "-1",
@@ -4439,7 +4439,7 @@
    "lineStr": "        HASHPOS                         :MSTORE(batchHashPos),JMP(processTxsEnd)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -4453,7 +4453,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -4569,7 +4569,7 @@
    "lineStr": "    $               :ADD, MSTORE(SP++), JMP(readCode)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -4724,7 +4724,7 @@
    "lineStr": "    E               :MSTORE(SP++), JMP(readCode); [a * b(E) => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -4738,7 +4738,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -4861,7 +4861,7 @@
    "lineStr": "    E               :MSTORE(SP++), JMP(readCode); [a - b(E) => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5016,7 +5016,7 @@
    "lineStr": "    B               :MSTORE(SP++), JMP(readCode); [a / b(B) => SP]"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5030,7 +5030,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5311,7 +5311,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode); [a / b(A) => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5466,7 +5466,7 @@
    "lineStr": "    C               :MSTORE(SP++), JMP(readCode); [a % b(C) => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5480,7 +5480,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5715,7 +5715,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode); [a % b(C) => SP]"
   },
   {
-   "CONST": "7968908",
+   "CONST": "31876441",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5729,7 +5729,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 80 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -5743,7 +5743,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 3 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6071,7 +6071,7 @@
    "lineStr": "    0               :MSTORE(SP++), JMP(readCode); [0 => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6212,7 +6212,7 @@
    "lineStr": "    C               :MSTORE(SP++), JMP(readCode); [C => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6360,7 +6360,7 @@
    "lineStr": "    A                   :MSTORE(SP++), JMP(readCode) ; [a ** exp => SP]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6374,7 +6374,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498068",
+   "CONST": "1992289",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6704,7 +6704,7 @@
    "lineStr": "    D               :MSTORE(SP++), JMP(readCode); [D => SP]"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6734,7 +6734,7 @@
    "lineStr": "    $ => A                                      :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "JMPN": 1,
@@ -6749,7 +6749,7 @@
    "lineStr": "    %MAX_CNT_KECCAK_F - CNT_KECCAK_F - A - 1    :JMPN(outOfCountersKeccak)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -6946,7 +6946,7 @@
    "lineStr": "    E               :MSTORE(SP++), JMP(readCode); [hash(E) => SP]"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7020,7 +7020,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7094,7 +7094,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7108,7 +7108,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 10 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7195,7 +7195,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7260,7 +7260,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7325,7 +7325,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7399,7 +7399,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7413,7 +7413,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7529,7 +7529,7 @@
    "lineStr": "    $               :LT, MSTORE(SP++), JMP(readCode) ; [(a < b) => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7543,7 +7543,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7659,7 +7659,7 @@
    "lineStr": "    $               :LT, MSTORE(SP++), JMP(readCode) ; [(b < a) => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7673,7 +7673,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7789,7 +7789,7 @@
    "lineStr": "    $               :SLT, MSTORE(SP++), JMP(readCode) ; [signed(a < b) => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7803,7 +7803,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7919,7 +7919,7 @@
    "lineStr": "    $               :SLT, MSTORE(SP++), JMP(readCode) ; [signed(b < a) => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -7933,7 +7933,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8049,7 +8049,7 @@
    "lineStr": "    $               :EQ, MSTORE(SP++), JMP(readCode) ; [(a == b) => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8063,7 +8063,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8158,7 +8158,7 @@
    "lineStr": "    $               :EQ, MSTORE(SP-1), JMP(readCode) ; [(a == 0) ==> SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8172,7 +8172,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8288,7 +8288,7 @@
    "lineStr": "    $               :AND, MSTORE(SP++), JMP(readCode) ; [ a & b => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8302,7 +8302,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8418,7 +8418,7 @@
    "lineStr": "    $               :OR, MSTORE(SP++), JMP(readCode) ; [ a | b => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8432,7 +8432,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8548,7 +8548,7 @@
    "lineStr": "    $               :XOR,MSTORE(SP++), JMP(readCode) ; [ a ^ b => SP]"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8562,7 +8562,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8658,7 +8658,7 @@
    "lineStr": "    $ => A          :XOR,MSTORE(SP-1), JMP(readCode) ; [ NOT a => SP]"
   },
   {
-   "CONST": "7968958",
+   "CONST": "31876491",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8672,7 +8672,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 30 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8860,7 +8860,7 @@
    "lineStr": "    0               :MSTORE(SP++), JMP(readCode) ; [ 0 => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -8977,7 +8977,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode) ; [ A => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9099,7 +9099,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode) ; [A => SP]"
   },
   {
-   "CONST": "498069",
+   "CONST": "1992290",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9113,7 +9113,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 5   :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9456,7 +9456,7 @@
    "lineStr": "    D                       :MSTORE(SP++), JMP(readCode) ; [(value >> shift (signed)) => SP]"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9573,7 +9573,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9587,7 +9587,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9681,7 +9681,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9695,7 +9695,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9808,7 +9808,7 @@
    "lineStr": "    GAS - %WARM_STORGE_READ_GAS - D * %COLD_ACCOUNT_ACCESS_COST_REDUCED => GAS    :JMPN(outOfGas, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9882,7 +9882,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -9956,7 +9956,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10030,7 +10030,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10104,7 +10104,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10162,7 +10162,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10410,7 +10410,7 @@
    "lineStr": "    A - 1           :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10424,7 +10424,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 200 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -10438,7 +10438,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 3          :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "264868",
+   "CONST": "1061003",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -11276,7 +11276,7 @@
    "lineStr": "    0                   :MSTORE(SP++), JMP(readCode); [0 => SP]"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -11290,7 +11290,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 200 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -12270,7 +12270,7 @@
    "lineStr": "                        :JMP(txType)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -12284,7 +12284,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 200 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -13156,7 +13156,7 @@
    "lineStr": "                    :JMP(txType)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -13170,7 +13170,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -13518,7 +13518,7 @@
    "lineStr": "    $ => B          :MLOAD(retCallOffset)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -13888,7 +13888,7 @@
    "lineStr": "    $ => B          :MLOAD(originCTX), JMPNZ(opRETURNcreate, endDeploy)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -13902,7 +13902,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -14210,7 +14210,7 @@
    "lineStr": "    A - 1           :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -14987,7 +14987,7 @@
    "lineStr": "                    :JMP(txType)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -15001,7 +15001,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498070",
+   "CONST": "1992291",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -15015,7 +15015,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 4          :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -15912,7 +15912,7 @@
    "lineStr": "                        :JMP(txType)"
   },
   {
-   "CONST": "7968688",
+   "CONST": "31876221",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -16604,7 +16604,7 @@
    "lineStr": "                    :JMP(txType)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -16940,7 +16940,7 @@
    "lineStr": "    $ => B          :MLOAD(retCallOffset)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -17258,7 +17258,7 @@
    "lineStr": "    A - 1           :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -17272,7 +17272,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -17286,7 +17286,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "264611",
+   "CONST": "1060485",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -17948,7 +17948,7 @@
    "lineStr": "    A - 1                   :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -17962,7 +17962,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep, invalidOpcode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -18257,7 +18257,7 @@
    "lineStr": "    $ => A          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "inB": "-1",
@@ -18316,7 +18316,7 @@
    "lineStr": "    0 => HASHPOS"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -18541,7 +18541,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode); [hash(A) => SP]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -18555,7 +18555,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -18623,7 +18623,7 @@
    "lineStr": "    $ => A                         :MLOAD(SP), JMP(checkJumpDest); [counter => PC]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -18637,7 +18637,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19112,7 +19112,7 @@
    "lineStr": "    $                               :EQ, JMPC(readCode, invalidJump)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19171,7 +19171,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19200,7 +19200,7 @@
    "lineStr": "    GAS - %JUMP_DEST_GAS => GAS  :JMPN(outOfGas, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19214,7 +19214,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19479,7 +19479,7 @@
    "lineStr": "    B + 1               :MSTORE(nextFreeLogIndex), JMP(opLOGLoop) ; store next free log index"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19493,7 +19493,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19758,7 +19758,7 @@
    "lineStr": "    B + 1               :MSTORE(nextFreeLogIndex), JMP(opLOGLoop)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -19772,7 +19772,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20037,7 +20037,7 @@
    "lineStr": "    B + 1               :MSTORE(nextFreeLogIndex), JMP(opLOGLoop)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20051,7 +20051,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20316,7 +20316,7 @@
    "lineStr": "    B + 1               :MSTORE(nextFreeLogIndex), JMP(opLOGLoop)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20330,7 +20330,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20595,7 +20595,7 @@
    "lineStr": "    B + 1               :MSTORE(nextFreeLogIndex), JMP(opLOGLoop)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20737,7 +20737,7 @@
    "lineStr": "    $ => A          :MLOAD(numTopics)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -20839,7 +20839,7 @@
    "lineStr": "    A - 1 =>  A         :JMP(opSaveTopicsLoop)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -21857,7 +21857,7 @@
    "lineStr": "    $ => B                          :MLOAD(isCreateContract), JMPNZ(opAuxPUSHB, opAuxPUSHA)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -21978,7 +21978,7 @@
    "lineStr": "    PC + D => PC                    :JMP(readCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22076,7 +22076,7 @@
    "lineStr": "    D - 1 => C                      :JMPN(opAuxPUSHBend)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22398,7 +22398,7 @@
    "lineStr": "    $ => CTX                        :MLOAD(currentCTX), JMP(opAuxPUSHBend)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22490,7 +22490,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22582,7 +22582,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22674,7 +22674,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22766,7 +22766,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22858,7 +22858,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -22950,7 +22950,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23042,7 +23042,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23134,7 +23134,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23226,7 +23226,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23318,7 +23318,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23410,7 +23410,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23502,7 +23502,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23594,7 +23594,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23686,7 +23686,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23778,7 +23778,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23870,7 +23870,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP           :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -23987,7 +23987,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode); [swapped_value_b => SP]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24104,7 +24104,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24221,7 +24221,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24338,7 +24338,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24455,7 +24455,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24572,7 +24572,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24689,7 +24689,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24806,7 +24806,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -24923,7 +24923,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25040,7 +25040,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25157,7 +25157,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25274,7 +25274,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25391,7 +25391,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25508,7 +25508,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25625,7 +25625,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25742,7 +25742,7 @@
    "lineStr": "    B               :MSTORE(SP-1), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25786,7 +25786,7 @@
    "lineStr": "    GAS - %GAS_QUICK_STEP => GAS    :JMPN(outOfGas, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25910,7 +25910,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode); [value(A) => SP]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -25924,7 +25924,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26253,7 +26253,7 @@
    "lineStr": "                    :JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26267,7 +26267,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26468,7 +26468,7 @@
    "lineStr": "    D               :MSTORE(MEM:E), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26586,7 +26586,7 @@
    "lineStr": "    0 => A"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26663,7 +26663,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26677,7 +26677,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26821,7 +26821,7 @@
    "lineStr": "    GAS - %SLOAD_GAS - A * %COLD_SLOAD_COST_REDUCED => GAS    :JMPN(outOfGas, readCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26835,7 +26835,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498064",
+   "CONST": "1992285",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -26849,7 +26849,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 10 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "264868",
+   "CONST": "1061003",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -27777,7 +27777,7 @@
    "lineStr": "    $ => SR         :SSTORE, JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -27791,7 +27791,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -27995,7 +27995,7 @@
    "lineStr": "    0               :MSTORE(SP++), JMP(readCode); [0 => SP]"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -28120,7 +28120,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -28134,7 +28134,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -28590,7 +28590,7 @@
    "lineStr": "    C - B => C      :MSTORE(numLastBytes)"
   },
   {
-   "CONST": "7968688",
+   "CONST": "31876221",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -28704,7 +28704,7 @@
    "lineStr": "    $ => A          :MLOAD(lastMemOffset)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -29235,7 +29235,7 @@
    "lineStr": "                    :JMP(readCode)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -29249,7 +29249,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "7968958",
+   "CONST": "31876491",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -29417,7 +29417,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -29817,7 +29817,7 @@
    "lineStr": "    E               :MSTORE(remainingBytes)"
   },
   {
-   "CONST": "249037",
+   "CONST": "996148",
    "inCntMemAlign": "-1",
    "inE": "-1",
    "JMPN": 1,
@@ -29832,7 +29832,7 @@
    "lineStr": "    %MAX_CNT_MEM_ALIGN - CNT_MEM_ALIGN  - E     :JMPN(outOfCountersMemalign)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -29846,7 +29846,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100                 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30227,7 +30227,7 @@
    "lineStr": "    $ => B          :HASHP1(E), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30241,7 +30241,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30370,7 +30370,7 @@
    "lineStr": "    A               :MSTORE(SP++), JMP(readCode); [size => SP]"
   },
   {
-   "CONST": "7968688",
+   "CONST": "31876221",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30384,7 +30384,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 300         :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30807,7 +30807,7 @@
    "lineStr": "    E               :MSTORE(remainingBytes), JMP(opCODECOPYloopInit)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -30971,7 +30971,7 @@
    "lineStr": "    $ => B                                              :MLOAD(arithRes1)"
   },
   {
-   "CONST": "265381",
+   "CONST": "1062038",
    "inCntPoseidonG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -30986,7 +30986,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE - 1 - B  :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "149795",
+   "CONST": "599185",
    "inCntPaddingPG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -31093,7 +31093,7 @@
    "lineStr": "                                    :RETURN"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31107,7 +31107,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31246,7 +31246,7 @@
    "lineStr": "    %MAX_STACK_SIZE - SP       :JMPN(stackOverflow, readCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31260,7 +31260,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31657,7 +31657,7 @@
    "lineStr": "    GAS - A => GAS  :JMPN(outOfGas)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31942,7 +31942,7 @@
    "lineStr": "    $               :EQ, JMPC(readCode, outOfGas)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -31956,7 +31956,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265382",
+   "CONST": "1062039",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -34917,7 +34917,7 @@
    "lineStr": "    CTX                                 :MSTORE(currentCTX), JMP(preEnd)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35119,7 +35119,7 @@
    "lineStr": "    A - 1           :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35133,7 +35133,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100         :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35330,7 +35330,7 @@
    "lineStr": "    32              :MSTORE(readXFromCalldataLength)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35570,7 +35570,7 @@
    "lineStr": "    B => CTX"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35692,7 +35692,7 @@
    "lineStr": "    $ => B          :MLOAD(retCallOffset)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35935,7 +35935,7 @@
    "lineStr": "    CTX             :MSTORE(currentCTX), JMP(preEnd)"
   },
   {
-   "CONST": "248987",
+   "CONST": "996098",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35949,7 +35949,7 @@
    "lineStr": "    %MAX_CNT_ARITH - CNT_ARITH - 50     :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "498024",
+   "CONST": "1992245",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -35963,7 +35963,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 50   :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968188",
+   "CONST": "31875721",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -36650,7 +36650,7 @@
    "lineStr": "    CTX                                 :MSTORE(currentCTX), JMP(preEnd)"
   },
   {
-   "CONST": "494074",
+   "CONST": "1988295",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -36664,7 +36664,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 4000     :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "229037",
+   "CONST": "976148",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -36678,7 +36678,7 @@
    "lineStr": "    %MAX_CNT_ARITH - CNT_ARITH - 20000      :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "7838988",
+   "CONST": "31746521",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -37528,7 +37528,7 @@
    "lineStr": "    A - 2 => A"
   },
   {
-   "CONST": "497374",
+   "CONST": "1991595",
    "inCntBinary": "-1",
    "inA": "-400",
    "JMPN": 1,
@@ -37543,7 +37543,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 700 - 400*A      :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "204037",
+   "CONST": "951148",
    "inCntArith": "-1",
    "inA": "-14000",
    "JMPN": 1,
@@ -37558,7 +37558,7 @@
    "lineStr": "    %MAX_CNT_ARITH - CNT_ARITH - 45000 - 14000*A    :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "7418988",
+   "CONST": "31326521",
    "inSTEP": "-1",
    "inA": "-200000",
    "JMPN": 1,
@@ -37582,7 +37582,7 @@
    "lineStr": "                                                    :JMP(afterCounts)"
   },
   {
-   "CONST": "497674",
+   "CONST": "1991895",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -37596,7 +37596,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 400     :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "245037",
+   "CONST": "992148",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -37610,7 +37610,7 @@
    "lineStr": "    %MAX_CNT_ARITH - CNT_ARITH - 4000      :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "7918988",
+   "CONST": "31826521",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -123457,7 +123457,7 @@
    "lineStr": "        D           :MSTORE(ecrecover_v)"
   },
   {
-   "CONST": "497524",
+   "CONST": "1991745",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -123471,7 +123471,7 @@
    "lineStr": "        %MAX_CNT_BINARY - CNT_BINARY - 550   :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "247937",
+   "CONST": "995048",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -123485,7 +123485,7 @@
    "lineStr": "        %MAX_CNT_ARITH - CNT_ARITH - 1100     :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "7962588",
+   "CONST": "31870121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -123515,7 +123515,7 @@
    "lineStr": "        $ => A         :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "JMPN": 1,
@@ -137717,7 +137717,7 @@
    "lineStr": "    A                    :MSTORE(touchedSR), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -137731,7 +137731,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -137745,7 +137745,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -138074,7 +138074,7 @@
    "lineStr": "    $ => E          :MLOAD(tmpE), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -138088,7 +138088,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -141422,7 +141422,7 @@
    "lineStr": "        CTX                             :MSTORE(currentCTX)"
   },
   {
-   "CONST": "7868988",
+   "CONST": "31776521",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -141436,7 +141436,7 @@
    "lineStr": "        %MAX_CNT_STEPS - STEP - 100000 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "497974",
+   "CONST": "1992195",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -141450,7 +141450,7 @@
    "lineStr": "        %MAX_CNT_BINARY - CNT_BINARY - 100   :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249035",
+   "CONST": "996146",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -142207,7 +142207,7 @@
    "lineStr": "        0 => C                          :JMP(loopBytes)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -142918,7 +142918,7 @@
    "lineStr": "        $ => A                          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "JMPN": 1,
@@ -143265,7 +143265,7 @@
    "lineStr": "        $ => A                          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2256",
+   "CONST": "9027",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "inB": "-1",
@@ -143313,7 +143313,7 @@
    "lineStr": "        $ => B                          :MLOAD(argsOffsetCall)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -143717,7 +143717,7 @@
    "lineStr": "        A                               :MSTORE(storageAddr)"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -143731,7 +143731,7 @@
    "lineStr": "        %MAX_CNT_STEPS - STEP - 200 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "264868",
+   "CONST": "1061003",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -143745,7 +143745,7 @@
    "lineStr": "        %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE*3 :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -144484,7 +144484,7 @@
    "lineStr": "        $ => B                                                  :MLOAD(arithRes1)"
   },
   {
-   "CONST": "265638",
+   "CONST": "1062556",
    "inCntPoseidonG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -144499,7 +144499,7 @@
    "lineStr": "        %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - 1 - B            :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "149795",
+   "CONST": "599185",
    "inCntPaddingPG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -144715,7 +144715,7 @@
    "lineStr": "        PC + 1 => PC                    :JMP(@mapping_opcodes + RR)"
   },
   {
-   "CONST": "7968488",
+   "CONST": "31876021",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -144752,7 +144752,7 @@
    "lineStr": "        $ => A                          :MLOAD(isCreateContract), JMPNZ(readDeployBytecode, readByteCode)"
   },
   {
-   "CONST": "7968588",
+   "CONST": "31876121",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -144766,7 +144766,7 @@
    "lineStr": "        %MAX_CNT_STEPS - STEP - 400 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -144953,7 +144953,7 @@
    "lineStr": "        $ => SR                         :SSTORE"
   },
   {
-   "CONST": "7968788",
+   "CONST": "31876321",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -144967,7 +144967,7 @@
    "lineStr": "        %MAX_CNT_STEPS - STEP - 200 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "264611",
+   "CONST": "1060485",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -145747,7 +145747,7 @@
    "lineStr": "        $${eventLog(onOpcode(0))}        :JMP(opSTOP)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -145761,7 +145761,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -145851,7 +145851,7 @@
    "lineStr": "    1 => B          :RETURN"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -145923,7 +145923,7 @@
    "lineStr": "    B => A"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -145937,7 +145937,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 10 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146083,7 +146083,7 @@
    "lineStr": "    $ => D          :MLOAD(tmpVarDgetLen), RETURN"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146155,7 +146155,7 @@
    "lineStr": "    B => A"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146169,7 +146169,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 10 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146346,7 +146346,7 @@
    "lineStr": "    $ => D          :MLOAD(tmpVarDgetLen), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146412,7 +146412,7 @@
    "lineStr": "    1               :MSTORE(isMSTOREX)"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146426,7 +146426,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -146440,7 +146440,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 1 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147588,7 +147588,7 @@
    "lineStr": "                    :RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147602,7 +147602,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147616,7 +147616,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147669,7 +147669,7 @@
    "lineStr": "    1               :MSTORE(isMLOADX)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147683,7 +147683,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -147697,7 +147697,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntMemAlign": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148115,7 +148115,7 @@
    "lineStr": "                    :JMP(outOfGas)"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148129,7 +148129,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148143,7 +148143,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 3 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "264868",
+   "CONST": "1061003",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148455,7 +148455,7 @@
    "lineStr": "    $ => D                      :MLOAD(tmpVarDemptyAcc), RETURN"
   },
   {
-   "CONST": "7968958",
+   "CONST": "31876491",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148469,7 +148469,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 30       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148743,7 +148743,7 @@
    "lineStr": "    $ => E                  :MLOAD(tmpVarEcompGas), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -148757,7 +148757,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498069",
+   "CONST": "1992290",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149572,7 +149572,7 @@
    "lineStr": "    $ => RR         :MLOAD(tmpZkPCArith),JMP(loadTmp)"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149586,7 +149586,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149600,7 +149600,7 @@
    "lineStr": "    %MAX_CNT_ARITH - CNT_ARITH - 1   :JMPN(outOfCountersArith)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149835,7 +149835,7 @@
    "lineStr": "    $ => RR        :MLOAD(tmpZkPCArith),JMP(loadTmp)"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149849,7 +149849,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -149863,7 +149863,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 3 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150405,7 +150405,7 @@
    "lineStr": "    E                   :MSTORE(tmpVarEArith), RETURN"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150419,7 +150419,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150433,7 +150433,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150575,7 +150575,7 @@
    "lineStr": "    E => A                  :JMP(SHRarithinit)"
   },
   {
-   "CONST": "7968958",
+   "CONST": "31876491",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150589,7 +150589,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 30       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150887,7 +150887,7 @@
    "lineStr": "    $ => E                  :MLOAD(tmpVarESHX), RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150901,7 +150901,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498070",
+   "CONST": "1992291",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -150915,7 +150915,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 4 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249035",
+   "CONST": "996146",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -151056,7 +151056,7 @@
    "lineStr": "                            :JMP(SHLarithinit)"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -151070,7 +151070,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -151084,7 +151084,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249036",
+   "CONST": "996147",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -151858,7 +151858,7 @@
    "lineStr": "    $${eventLog(onError, invalidCodeStartsEF)} :JMP(handleError)"
   },
   {
-   "CONST": "7968488",
+   "CONST": "31876021",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -151872,7 +151872,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 500       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152156,7 +152156,7 @@
    "lineStr": "    0 => GAS        :JMP(sendGasSeq)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152170,7 +152170,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20          :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152333,7 +152333,7 @@
    "lineStr": "    $ => B                              :MLOAD(tmpVarBoffsetUtil), RETURN"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152347,7 +152347,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50       :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498071",
+   "CONST": "1992292",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152361,7 +152361,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 3 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "264611",
+   "CONST": "1060485",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152829,7 +152829,7 @@
    "lineStr": "    A - 1                           :MSTORE(depth), JMP(readCode)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -152843,7 +152843,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153014,7 +153014,7 @@
    "lineStr": "    0 => B"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153028,7 +153028,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153217,7 +153217,7 @@
    "lineStr": "    B - 1 => A"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153351,7 +153351,7 @@
    "lineStr": "    0 => B                          :JMP(endPushLoop)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153365,7 +153365,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 20 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498070",
+   "CONST": "1992291",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153449,7 +153449,7 @@
    "lineStr": "    B - 1 => A                      :JMP(computeFactorLoop)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153547,7 +153547,7 @@
    "lineStr": "    B - 1 => A                      :JMP(doRotateLoop2)"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153669,7 +153669,7 @@
    "lineStr": "    $ => D                      :MLOAD(pushBytes), RETURN"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153734,7 +153734,7 @@
    "lineStr": "        1 => D"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153748,7 +153748,7 @@
    "lineStr": "        %MAX_CNT_STEPS - STEP - 50      :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -153922,7 +153922,7 @@
    "lineStr": "                                        :RETURN"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154205,7 +154205,7 @@
    "lineStr": "    $ => E          :MLOAD(tmpVarEEF), RETURN"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154219,7 +154219,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154385,7 +154385,7 @@
    "lineStr": "    $ => B                                                  :MLOAD(arithRes1)"
   },
   {
-   "CONST": "265638",
+   "CONST": "1062556",
    "inCntPoseidonG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -154400,7 +154400,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - 1 - B            :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "149795",
+   "CONST": "599185",
    "inCntPaddingPG": "-1",
    "inB": "-1",
    "JMPN": 1,
@@ -154468,7 +154468,7 @@
    "lineStr": "    0 => HASHPOS"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154759,7 +154759,7 @@
    "lineStr": "    $ => E          :MLOAD(tmpVarEhashP), RETURN"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154773,7 +154773,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 10 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154855,7 +154855,7 @@
    "lineStr": "    $ => A                                          :MLOAD(cntKeccakPreProcess)"
   },
   {
-   "CONST": "2257",
+   "CONST": "9028",
    "inCntKeccakF": "-1",
    "inA": "-1",
    "JMPN": 1,
@@ -154870,7 +154870,7 @@
    "lineStr": "    %MAX_CNT_KECCAK_F - CNT_KECCAK_F - A - 1        :JMPN(outOfCountersKeccak)"
   },
   {
-   "CONST": "7968938",
+   "CONST": "31876471",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154884,7 +154884,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 50 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "265125",
+   "CONST": "1061521",
    "inCntPoseidonG": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -154898,7 +154898,7 @@
    "lineStr": "    %MAX_CNT_POSEIDON_G - CNT_POSEIDON_G - %MAX_CNT_POSEIDON_SLOAD_SSTORE*2 :JMPN(outOfCountersPoseidon)"
   },
   {
-   "CONST": "498073",
+   "CONST": "1992294",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -155112,7 +155112,7 @@
    "lineStr": "    $ => SR                             :SSTORE, RETURN"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -155126,7 +155126,7 @@
    "lineStr": "    %MAX_CNT_STEPS - STEP - 100 :JMPN(outOfCountersStep)"
   },
   {
-   "CONST": "498070",
+   "CONST": "1992291",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -155140,7 +155140,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 4    :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "249035",
+   "CONST": "996146",
    "inCntArith": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -155853,7 +155853,7 @@
    "lineStr": "    $ => E          :MLOAD(tmpVarEmulmod), RETURN"
   },
   {
-   "CONST": "498072",
+   "CONST": "1992293",
    "inCntBinary": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -155867,7 +155867,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2 :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968968",
+   "CONST": "31876501",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -156019,7 +156019,7 @@
    "lineStr": "    D => B          :CALL(getLenBits)  ;A exp bits length"
   },
   {
-   "CONST": "498074",
+   "CONST": "1992295",
    "inCntBinary": "-1",
    "inA": "-2",
    "JMPN": 1,
@@ -156034,7 +156034,7 @@
    "lineStr": "    %MAX_CNT_BINARY - CNT_BINARY - 2*A    :JMPN(outOfCountersBinary)"
   },
   {
-   "CONST": "7968988",
+   "CONST": "31876521",
    "inSTEP": "-1",
    "inA": "-50",
    "JMPN": 1,
@@ -156385,7 +156385,7 @@
    "lineStr": "    2               :ASSERT"
   },
   {
-   "CONST": "7968888",
+   "CONST": "31876421",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -156721,7 +156721,7 @@
    "lineStr": "    $ => E          :MLOAD(tmpVarEReadXFromOffset), RETURN"
   },
   {
-   "CONST": "7968978",
+   "CONST": "31876511",
    "inSTEP": "-1",
    "JMPN": 1,
    "useJmpAddr": 1,
@@ -157910,49 +157910,49 @@
    "fileName": "constants.zkasm"
   },
   "TOTAL_STEPS_LIMIT": {
-   "value": "8388608",
+   "value": "33554432",
    "type": "CONST",
    "line": 78,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_STEPS_LIMIT": {
-   "value": "8388408",
+   "value": "33554232",
    "type": "CONST",
    "line": 80,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_ARITH_LIMIT": {
-   "value": "262144",
+   "value": "1048576",
    "type": "CONST",
    "line": 81,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_BINARY_LIMIT": {
-   "value": "524288",
+   "value": "2097152",
    "type": "CONST",
    "line": 82,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_MEM_ALIGN_LIMIT": {
-   "value": "262144",
+   "value": "1048576",
    "type": "CONST",
    "line": 83,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_KECCAK_F_LIMIT": {
-   "value": "2376",
+   "value": "9504",
    "type": "CONST",
    "line": 84,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_PADDING_PG_LIMIT": {
-   "value": "149796",
+   "value": "599186",
    "type": "CONST",
    "line": 85,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_POSEIDON_G_LIMIT": {
-   "value": "279620",
+   "value": "1118481",
    "type": "CONST",
    "line": 86,
    "fileName": "constants.zkasm"
@@ -157964,49 +157964,49 @@
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_STEPS": {
-   "value": "7968988",
+   "value": "31876521",
    "type": "CONST",
    "line": 90,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_ARITH": {
-   "value": "249037",
+   "value": "996148",
    "type": "CONST",
    "line": 91,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_BINARY": {
-   "value": "498074",
+   "value": "1992295",
    "type": "CONST",
    "line": 92,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_MEM_ALIGN": {
-   "value": "249037",
+   "value": "996148",
    "type": "CONST",
    "line": 93,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_KECCAK_F": {
-   "value": "2258",
+   "value": "9029",
    "type": "CONST",
    "line": 94,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_PADDING_PG": {
-   "value": "142307",
+   "value": "569227",
    "type": "CONST",
    "line": 95,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_POSEIDON_G": {
-   "value": "265639",
+   "value": "1062557",
    "type": "CONST",
    "line": 96,
    "fileName": "constants.zkasm"
   },
   "MAX_CNT_POSEIDON_SLOAD_SSTORE": {
-   "value": "257",
+   "value": "518",
    "type": "CONST",
    "line": 97,
    "fileName": "constants.zkasm"

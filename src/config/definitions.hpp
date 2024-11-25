@@ -73,4 +73,18 @@
 #define DATABASE_USE_CACHE // If defined, the Database class uses a cache
 #define USE_NEW_KVTREE
 
+#ifndef REDUCE_ZKEVM_MEMORY
+#define REDUCE_ZKEVM_MEMORY true
+#endif
+
+#define USE_GENERIC_PARSER false
+
+#define LOAD_CONST_FILES false
+#define NROWS_PACK 4
+#ifdef __USE_CUDA__
+#define TRANSPOSE_TMP_POLS false
+#else
+#define TRANSPOSE_TMP_POLS true
+#endif
+
 #endif

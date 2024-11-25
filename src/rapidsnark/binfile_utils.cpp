@@ -10,12 +10,16 @@
 #include "binfile_utils.hpp"
 #include "thread_utils.hpp"
 #include <omp.h>
+#include <iostream>
 
 namespace BinFileUtils
 {
     BinFile::BinFile(void *data, uint64_t size, std::string _type, uint32_t maxVersion)
     {
         addr = malloc(size);
+        if(addr == NULL){
+             throw std::invalid_argument("Invalid size malloc failed");
+        }
         int nThreads = omp_get_max_threads() / 2;
         ThreadUtils::parcpy(addr, data, size, nThreads);
 
@@ -24,13 +28,13 @@ namespace BinFileUtils
 
         if (type != _type)
         {
-            throw new std::invalid_argument("Invalid file type. It should be " + _type + " and it us " + type);
+            throw std::invalid_argument("Invalid file type. It should be " + _type + " and it us " + type);
         }
 
         version = readU32LE();
         if (version > maxVersion)
         {
-            throw new std::invalid_argument("Invalid version. It should be <=" + std::to_string(maxVersion) + " and it us " + std::to_string(version));
+            throw std::invalid_argument("Invalid version. It should be <=" + std::to_string(maxVersion) + " and it us " + std::to_string(version));
         }
 
         u_int32_t nSections = readU32LE();
@@ -54,7 +58,7 @@ namespace BinFileUtils
         readingSection = NULL;
     }
 
-    BinFile::BinFile(std::string fileName, std::string _type, uint32_t maxVersion)
+    BinFile::BinFile(std::string fileName, std::string _type, uint32_t maxVersion,  void* reservedMemoryPtr, uint64_t reservedMemorySize)
     {
 
         int fd;
@@ -68,30 +72,56 @@ namespace BinFileUtils
             throw std::system_error(errno, std::generic_category(), "fstat");
 
         size = sb.st_size;
-        void *addrmm = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, 0);
-        addr = malloc(sb.st_size);
-
-        int nThreads = omp_get_max_threads() / 2;
-        ThreadUtils::parcpy(addr, addrmm, sb.st_size, nThreads);
-        //    memcpy(addr, addrmm, sb.st_size);
-
-        munmap(addrmm, sb.st_size);
         close(fd);
+
+        if(NULL == reservedMemoryPtr) {
+            addr = malloc(size);
+            if( addr == NULL){
+                throw std::invalid_argument("Invalid size malloc failed");
+            }
+        } else {
+            if(size > reservedMemorySize) {
+                throw std::runtime_error("There is not enough memory");
+            }
+            useReservedMemory = true;
+            addr = reservedMemoryPtr;
+        }
+
+        // Determine the number of chunks and the size of each chunk
+        size_t numChunks = 8; //omp_get_max_threads()/2;
+        if(numChunks == 0 ) numChunks = 1;
+        size_t chunkSize = size / numChunks;
+        size_t remainder = size - numChunks*chunkSize;
+
+        #pragma omp parallel for num_threads(numChunks)
+        for(size_t i=0; i<numChunks; i++){
+            // Open the file
+            FILE* file = fopen(fileName.c_str(), "rb");
+            if(file == NULL){
+                throw std::system_error(errno, std::generic_category(), "open");
+            }
+            size_t chunkSize_ = i == numChunks -1 ? chunkSize + remainder : chunkSize;
+            size_t offset = i * chunkSize;
+            fseek(file, offset, SEEK_SET);
+            size_t readed = fread((uint8_t*)addr + offset, 1, chunkSize_, file);
+            if(readed != chunkSize_){
+                throw std::system_error(errno, std::generic_category(), "readed");
+            }
+            fclose(file);
+        }
 
         type.assign((const char *)addr, 4);
         pos = 4;
-
+        //std::cout << "debub 2" << std::endl;
         if (type != _type)
         {
-            throw new std::invalid_argument("Invalid file type. It should be " + _type + " and it us " + type);
+            throw std::invalid_argument("Invalid file type. It should be " + _type + " and it us " + type);
         }
-
         version = readU32LE();
         if (version > maxVersion)
         {
-            throw new std::invalid_argument("Invalid version. It should be <=" + std::to_string(maxVersion) + " and it us " + std::to_string(version));
+            throw  std::invalid_argument("Invalid version. It should be <=" + std::to_string(maxVersion) + " and it us " + std::to_string(version));
         }
-
         u_int32_t nSections = readU32LE();
 
         for (u_int32_t i = 0; i < nSections; i++)
@@ -108,14 +138,15 @@ namespace BinFileUtils
 
             pos += sSize;
         }
-
         pos = 0;
         readingSection = NULL;
     }
 
     BinFile::~BinFile()
     {
-        free(addr);
+        if(!useReservedMemory) {
+            free(addr);
+        }
     }
 
     void BinFile::startReadSection(u_int32_t sectionId, u_int32_t sectionPos)
@@ -123,17 +154,17 @@ namespace BinFileUtils
 
         if (sections.find(sectionId) == sections.end())
         {
-            throw new std::range_error("Section does not exist: " + std::to_string(sectionId));
+            throw std::range_error("Section does not exist: " + std::to_string(sectionId));
         }
 
         if (sectionPos >= sections[sectionId].size())
         {
-            throw new std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
+            throw std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
         }
 
         if (readingSection != NULL)
         {
-            throw new std::range_error("Already reading a section");
+            throw std::range_error("Already reading a section");
         }
 
         pos = (u_int64_t)(sections[sectionId][sectionPos].start) - (u_int64_t)addr;
@@ -147,7 +178,7 @@ namespace BinFileUtils
         {
             if ((u_int64_t)addr + pos - (u_int64_t)(readingSection->start) != readingSection->size)
             {
-                throw new std::range_error("Invalid section size");
+                throw std::range_error("Invalid section size");
             }
         }
         readingSection = NULL;
@@ -158,12 +189,12 @@ namespace BinFileUtils
 
         if (sections.find(sectionId) == sections.end())
         {
-            throw new std::range_error("Section does not exist: " + std::to_string(sectionId));
+            throw std::range_error("Section does not exist: " + std::to_string(sectionId));
         }
 
         if (sectionPos >= sections[sectionId].size())
         {
-            throw new std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
+            throw std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
         }
 
         return sections[sectionId][sectionPos].start;
@@ -174,16 +205,32 @@ namespace BinFileUtils
 
         if (sections.find(sectionId) == sections.end())
         {
-            throw new std::range_error("Section does not exist: " + std::to_string(sectionId));
+            throw std::range_error("Section does not exist: " + std::to_string(sectionId));
         }
 
         if (sectionPos >= sections[sectionId].size())
         {
-            throw new std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
+            throw std::range_error("Section pos too big. There are " + std::to_string(sections[sectionId].size()) + " and it's trying to access section: " + std::to_string(sectionPos));
         }
 
         return sections[sectionId][sectionPos].size;
     }
+
+    u_int8_t BinFile::readU8LE()
+    {
+        u_int8_t res = *((u_int8_t *)((u_int64_t)addr + pos));
+        pos += 1;
+        return res;
+    }
+
+
+    u_int16_t BinFile::readU16LE()
+    {
+        u_int16_t res = *((u_int16_t *)((u_int64_t)addr + pos));
+        pos += 2;
+        return res;
+    }
+
 
     u_int32_t BinFile::readU32LE()
     {
@@ -199,6 +246,10 @@ namespace BinFileUtils
         return res;
     }
 
+    bool BinFile::sectionExists(u_int32_t sectionId) {
+        return sections.find(sectionId) != sections.end();
+    }
+
     void *BinFile::read(u_int64_t len)
     {
         void *res = (void *)((u_int64_t)addr + pos);
@@ -206,9 +257,9 @@ namespace BinFileUtils
         return res;
     }
 
-    std::unique_ptr<BinFile> openExisting(std::string filename, std::string type, uint32_t maxVersion)
+    std::unique_ptr<BinFile> openExisting(std::string filename, std::string type, uint32_t maxVersion, void* reservedMemoryPtr, uint64_t reservedMemorySize)
     {
-        return std::unique_ptr<BinFile>(new BinFile(filename, type, maxVersion));
+        return std::unique_ptr<BinFile>(new BinFile(filename, type, maxVersion, reservedMemoryPtr, reservedMemorySize));
     }
 
 } // Namespace

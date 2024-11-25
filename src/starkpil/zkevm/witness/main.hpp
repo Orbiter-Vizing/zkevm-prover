@@ -1,5 +1,5 @@
-#ifndef ZKEVM_VERIFIER_MAIN_HPP
-#define ZKEVM_VERIFIER_MAIN_HPP
+#ifndef ZKEVM_VERIFIER_MAIN_2_HPP
+#define ZKEVM_VERIFIER_MAIN_2_HPP
 
 #include <string>
 #include <nlohmann/json.hpp>

@@ -2,6 +2,10 @@
 
 #include "zkey.hpp"
 #include "zkey_fflonk.hpp"
+#include <iostream>
+#include "zklog.hpp"
+#include "exit_process.hpp"
+
 
 namespace Zkey {
     FflonkZkeyHeader::FflonkZkeyHeader() {
@@ -11,6 +15,16 @@ namespace Zkey {
     FflonkZkeyHeader::~FflonkZkeyHeader() {
         mpz_clear(qPrime);
         mpz_clear(rPrime);
+
+        // Free memory allocated with malloc
+        free(k1);
+        free(k2);
+        free(w3);
+        free(w4);
+        free(w8);
+        free(wr);
+        free(X2);
+        free(C0);
     }
 
     FflonkZkeyHeader* FflonkZkeyHeader::loadFflonkZkeyHeader(BinFileUtils::BinFile *f) {
@@ -32,17 +46,59 @@ namespace Zkey {
         fflonkZkeyHeader->nAdditions = f->readU32LE();
         fflonkZkeyHeader->nConstraints = f->readU32LE();
 
-        fflonkZkeyHeader->k1 = f->read(fflonkZkeyHeader->n8r);
-        fflonkZkeyHeader->k2 = f->read(fflonkZkeyHeader->n8r);
+         // Memory allocation for void* members (assuming FrElement is a known size)
+        fflonkZkeyHeader->k1 = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->k1 == NULL){
+            cerr << "Memory allocation failed for k1" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->k2 = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->k2 == NULL){
+            cerr << "Memory allocation failed for k2" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->w3 = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->w3 == NULL){
+            cerr << "Memory allocation failed for w3" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->w4 = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->w4 == NULL){
+            cerr << "Memory allocation failed for w4" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->w8 = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->w8 == NULL){
+            cerr << "Memory allocation failed for w8" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->wr = malloc(fflonkZkeyHeader->n8r);
+        if(fflonkZkeyHeader->wr == NULL){
+            cerr << "Memory allocation failed for wr" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->X2 = malloc(fflonkZkeyHeader->n8q * 4);
+        if(fflonkZkeyHeader->X2 == NULL){
+            cerr << "Memory allocation failed for X2" << endl;
+            exit(-1);
+        }
+        fflonkZkeyHeader->C0 = malloc(fflonkZkeyHeader->n8q * 2);
+        if(fflonkZkeyHeader->C0 == NULL){
+            cerr << "Memory allocation failed for C0" << endl;
+            exit(-1);
+        }
 
-        fflonkZkeyHeader->w3 = f->read(fflonkZkeyHeader->n8r);
-        fflonkZkeyHeader->w4 = f->read(fflonkZkeyHeader->n8r);
-        fflonkZkeyHeader->w8 = f->read(fflonkZkeyHeader->n8r);
-        fflonkZkeyHeader->wr = f->read(fflonkZkeyHeader->n8r);
+        memcpy(fflonkZkeyHeader->k1, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
+        memcpy(fflonkZkeyHeader->k2, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
 
-        fflonkZkeyHeader->X2 = f->read(fflonkZkeyHeader->n8q * 4);
+        memcpy(fflonkZkeyHeader->w3, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
+        memcpy(fflonkZkeyHeader->w4, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
+        memcpy(fflonkZkeyHeader->w8, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
+        memcpy(fflonkZkeyHeader->wr, f->read(fflonkZkeyHeader->n8r), fflonkZkeyHeader->n8r);
 
-        fflonkZkeyHeader->C0 = f->read(fflonkZkeyHeader->n8q * 2);
+        memcpy(fflonkZkeyHeader->X2, f->read(fflonkZkeyHeader->n8q * 4), fflonkZkeyHeader->n8q * 4);
+
+        memcpy(fflonkZkeyHeader->C0, f->read(fflonkZkeyHeader->n8q * 2), fflonkZkeyHeader->n8q * 2);
 
         f->endReadSection();
 

@@ -1,5 +1,5 @@
-#ifndef CIRCOM_CALCWIT_RECURSIVE_2_H
-#define CIRCOM_CALCWIT_RECURSIVE_2_H
+#ifndef CIRCOM_CALCWIT_RECURSIVE_2_2_H
+#define CIRCOM_CALCWIT_RECURSIVE_2_2_H
 
 #include <mutex>
 #include <condition_variable>

@@ -78,6 +78,10 @@ void string2file (const string &s, const string &fileName);
 
 // Copy a file content into a string
 void file2string (const string &fileName, string &s);
+string fea2stringchain (Goldilocks &fr, const Goldilocks::Element &fea0, const Goldilocks::Element &fea1, const Goldilocks::Element &fea2, const Goldilocks::Element &fea3, const Goldilocks::Element &fea4, const Goldilocks::Element &fea5, const Goldilocks::Element &fea6, const Goldilocks::Element &fea7);
+
+// Load file in parallel
+void * loadFileParallel(const string &fileName, uint64_t size);
 
 /*
 // Convert an octal string into an hex string

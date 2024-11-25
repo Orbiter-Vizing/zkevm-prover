@@ -1,5 +1,5 @@
-#ifndef __CIRCOM_H
-#define __CIRCOM_H
+#ifndef __CIRCOM_2_H
+#define __CIRCOM_2_H
 
 #include <map>
 #include <gmp.h>
@@ -37,7 +37,7 @@ struct Circom_Circuit {
   //  const char *P;
   HashSignalInfo* InputHashMap;
   u64* witness2SignalList;
-  FrGElement* circuitConstants;  
+  FrGElement* circuitConstants;
   std::map<u32,IODefPair> templateInsId2IOSignalInfo;
 };
 
