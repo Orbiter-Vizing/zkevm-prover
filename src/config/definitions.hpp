@@ -77,7 +77,7 @@
 #define REDUCE_ZKEVM_MEMORY true
 #endif
 
-#define USE_GENERIC_PARSER false
+#define USE_GENERIC_PARSER true
 
 #define LOAD_CONST_FILES false
 #define NROWS_PACK 4
@@ -86,5 +86,7 @@
 #else
 #define TRANSPOSE_TMP_POLS true
 #endif
+
+#define ENABLE_EXPERIMENTAL_CODE true
 
 #endif

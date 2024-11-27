@@ -32,10 +32,38 @@
 #include "zklog.hpp"
 #include "exit_process.hpp"
 #include "chelpers_steps_pack.hpp"
+#include "chelpers_steps_gpu.hpp"
 #ifdef __AVX512__
 #include "chelpers_steps_avx512.hpp"
 #endif
 #include "fork_info.hpp"
+#include "memory.cuh"
+
+#if defined(__USE_CUDA__) && defined(ENABLE_EXPERIMENTAL_CODE)
+#include "cuda_utils.hpp"
+#include "ntt_goldilocks.hpp"
+#include <pthread.h>
+
+int asynctask(void* (*task)(void* args), void* arg)
+{
+	pthread_t th;
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	return pthread_create(&th, &attr, task, arg);
+}
+
+void* warmup_task(void* arg)
+{
+    warmup_all_gpus();
+    return NULL;
+}
+
+void warmup_gpu()
+{
+    asynctask(warmup_task, NULL);
+}
+#endif
 
 Prover::Prover(Goldilocks &fr,
                PoseidonGoldilocks &poseidon,
@@ -89,7 +117,7 @@ Prover::Prover(Goldilocks &fr,
             }
             else
             {
-                pAddress = calloc(polsSize, 1);
+                pAddress = calloc_zkevm(polsSize, 1);
                 if (pAddress == NULL)
                 {
                     zklog.error("Prover::genBatchProof() failed calling malloc() of size " + to_string(polsSize));
@@ -97,6 +125,11 @@ Prover::Prover(Goldilocks &fr,
                 }
                 zklog.info("Prover::genBatchProof() successfully allocated " + to_string(polsSize) + " bytes");
             }
+
+#if defined(__USE_CUDA__) && defined(ENABLE_EXPERIMENTAL_CODE)
+            alloc_pinned_mem(uint64_t(1<<24) * _starkInfo.mapSectionsN.section[eSection::cm1_n]);
+            warmup_gpu();
+#endif
 
             json finalVerkeyJson;
             file2json(config.finalVerkey, finalVerkeyJson);
@@ -148,8 +181,11 @@ Prover::~Prover()
         }
         else
         {
-            free(pAddress);
+            free_zkevm(pAddress);
         }
+#if defined(__USE_CUDA__) && defined(ENABLE_EXPERIMENTAL_CODE)
+        free_pinned_mem();
+#endif
 
         delete starkZkevm;
         delete starksC12a;
@@ -1066,7 +1102,7 @@ void Prover::execute(ProverRequest *pProverRequest)
     }
     else
     {
-        pExecuteAddress = calloc(polsSize, 1);
+        pExecuteAddress = calloc_zkevm(polsSize, 1);
         if (pExecuteAddress == NULL)
         {
             zklog.error("Prover::execute() failed calling calloc() of size " + to_string(commitPolsSize));
@@ -1127,7 +1163,7 @@ void Prover::execute(ProverRequest *pProverRequest)
     }
     else
     {
-        free(pExecuteAddress);
+        free_zkevm(pExecuteAddress);
     }
 
     TimerStopAndLog(PROVER_EXECUTE);

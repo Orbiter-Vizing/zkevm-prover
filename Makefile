@@ -1,9 +1,14 @@
+NVCC := /usr/local/cuda/bin/nvcc
+CUDA_ARCH := native
+
 TARGET_ZKP := zkProver
+TARGET_ZKP_GPU := zkProverGpu
 TARGET_BCT := bctree
 TARGET_MNG := mainGenerator
 TARGET_PLG := polsGenerator
 TARGET_PLD := polsDiff
 TARGET_TEST := zkProverTest
+TARGET_TEST_GPU := zkProverTestGpu
 TARGET_W2DB := witness2db
 TARGET_EXPRESSIONS := zkProverExpressions
 TARGET_SETUP := fflonkSetup
@@ -20,8 +25,9 @@ endif
 
 CXX := g++
 AS := nasm
-CXXFLAGS := -std=c++17 -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS) #-Wfatal-errors
-LDFLAGS := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -fopenmp -liomp5 $(GRPCPP_LIBS)
+CXXFLAGS := -std=c++17 -I /usr/local/cuda/include -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS) #-Wfatal-errors
+LDFLAGS_GPU := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -liomp5 $(GRPCPP_LIBS)
+LDFLAGS := $(LDFLAGS_GPU) -fopenmp
 CXXFLAGS_W2DB := -std=c++17 -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2
 LDFLAGS_W2DB := -lgmp -lstdc++ -lgmpxx
 CFLAGS := -fopenmp
@@ -58,7 +64,10 @@ INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(sort $(dir))
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
 SRCS_ZKP := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
+SRCS_ZKP_GPU := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" ! -path "./src/goldilocks/utils/deviceQuery.cu" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
+
 OBJS_ZKP := $(SRCS_ZKP:%=$(BUILD_DIR)/%.o)
+OBJS_ZKP_GPU := $(SRCS_ZKP_GPU:%=$(BUILD_DIR)/%.o)
 DEPS_ZKP := $(OBJS_ZKP:.o=.d)
 
 SRCS_BCT := $(shell find ./tools/starkpil/bctree/build_const_tree.cpp ./tools/starkpil/bctree/main.cpp ./src/goldilocks/src ./src/starkpil/merkleTree/merkleTreeBN128.cpp ./src/starkpil/merkleTree/merkleTreeGL.cpp ./src/poseidon_opt/poseidon_opt.cpp ./src/XKCP ./src/ffiasm ./src/starkpil/stark_info.* ./src/utils/* \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
@@ -66,7 +75,9 @@ OBJS_BCT := $(SRCS_BCT:%=$(BUILD_DIR)/%.o)
 DEPS_BCT := $(OBJS_BCT:.o=.d)
 
 SRCS_TEST := $(shell find ./test/examples/ ./src/XKCP ./src/goldilocks/src ./src/starkpil/stark_info.* ./src/starkpil/starks.* ./src/starkpil/chelpers.* ./src/rapidsnark/binfile_utils.* ./src/starkpil/steps.* ./src/starkpil/polinomial.hpp ./src/starkpil/merkleTree/merkleTreeGL.* ./src/starkpil/transcript/transcript.* ./src/starkpil/fri ./src/ffiasm ./src/utils ./tools/sm/sha256/sha256.cpp ./tools/sm/sha256/bcon/bcon_sha256.cpp ! -path "./src/starkpil/fri/friProveC12.*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
+SRCS_TEST_GPU := $(shell find ./test/examples/ ./src/XKCP ./src/goldilocks/src ./src/goldilocks/utils ./src/starkpil/stark_info.* ./src/starkpil/starks.* ./src/starkpil/chelpers.*  ./src/starkpil/chelpers_steps_gpu.cu  ./src/rapidsnark/binfile_utils.* ./src/starkpil/steps.* ./src/starkpil/polinomial.hpp ./src/starkpil/merkleTree/merkleTreeGL.* ./src/starkpil/transcript/transcript.* ./src/starkpil/fri ./src/ffiasm ./src/utils ./tools/sm/sha256/sha256.cpp ./tools/sm/sha256/bcon/bcon_sha256.cpp ! -path "./src/starkpil/fri/friProveC12.*" ! -path "./src/goldilocks/utils/deviceQuery.cu" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
 OBJS_TEST := $(SRCS_TEST:%=$(BUILD_DIR)/%.o)
+OBJS_TEST_GPU := $(SRCS_TEST_GPU:%=$(BUILD_DIR)/%.o)
 DEPS_TEST := $(OBJS_TEST:.o=.d)
 
 SRCS_W2DB := ./src/witness2db/witness2db.cpp  ./src/goldilocks/src/goldilocks_base_field.cpp ./src/goldilocks/src/poseidon_goldilocks.cpp
@@ -86,25 +97,10 @@ OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main.cpp.o, $(OBJS_SETUP)) # Exclude
 OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main_test.cpp.o, $(OBJS_SETUP)) # Exclude main.cpp from test build
 DEPS_SETUP := $(OBJS_SETUP:.o=.d)
 
-all: $(BUILD_DIR)/$(TARGET_ZKP)
+all: $(BUILD_DIR)/$(TARGET_ZKP_GPU)
 
-bctree: $(BUILD_DIR)/$(TARGET_BCT)
-
-test: $(BUILD_DIR)/$(TARGET_TEST)
-
-expressions: ${BUILD_DIR}/$(TARGET_EXPRESSIONS)
-
-$(BUILD_DIR)/$(TARGET_ZKP): $(OBJS_ZKP)
-	$(CXX) $(OBJS_ZKP) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-$(BUILD_DIR)/$(TARGET_BCT): $(OBJS_BCT)
-	$(CXX) $(OBJS_BCT) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-$(BUILD_DIR)/$(TARGET_TEST): $(OBJS_TEST)
-	$(CXX) $(OBJS_TEST) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
-
-$(BUILD_DIR)/$(TARGET_EXPRESSIONS): $(OBJS_EXPRESSIONS)
-	$(CXX) $(OBJS_EXPRESSIONS) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+$(BUILD_DIR)/$(TARGET_ZKP_GPU): $(OBJS_ZKP_GPU)
+	$(NVCC) $(OBJS_ZKP_GPU) -O3 -o $@ $(LDFLAGS_GPU)
 
 # assembly
 $(BUILD_DIR)/%.asm.o: %.asm
@@ -119,6 +115,25 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 $(BUILD_DIR)/%.cc.o: %.cc
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+# assembly
+$(BUILD_DIR)/%.asm.o: %.asm
+	$(MKDIR_P) $(dir $@)
+	$(AS) $(ASFLAGS) $< -o $@
+
+# c++ source
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	$(MKDIR_P) $(dir $@)
+	$(CXX) -D__USE_CUDA__ $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.cc.o: %.cc
+	$(MKDIR_P) $(dir $@)
+	$(CXX) -D__USE_CUDA__ $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+# cuda source
+$(BUILD_DIR)/%.cu.o: %.cu
+	$(MKDIR_P) $(dir $@)
+	$(NVCC) -D__USE_CUDA__ $(INC_FLAGS) -Isrc/goldilocks/utils -Xcompiler -fopenmp -Xcompiler -fPIC -Xcompiler -mavx2 -Xcompiler -O3 $< -dc --output-file $@
 
 main_generator: $(BUILD_DIR)/$(TARGET_MNG)
 
