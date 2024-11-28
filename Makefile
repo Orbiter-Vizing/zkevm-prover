@@ -1,17 +1,9 @@
-NVCC := /usr/local/cuda/bin/nvcc
-CUDA_ARCH := native
-
 TARGET_ZKP := zkProver
-TARGET_ZKP_GPU := zkProverGpu
 TARGET_BCT := bctree
 TARGET_MNG := mainGenerator
 TARGET_PLG := polsGenerator
 TARGET_PLD := polsDiff
 TARGET_TEST := zkProverTest
-TARGET_TEST_GPU := zkProverTestGpu
-TARGET_W2DB := witness2db
-TARGET_EXPRESSIONS := zkProverExpressions
-TARGET_SETUP := fflonkSetup
 
 BUILD_DIR := ./build
 SRC_DIRS := ./src ./test ./tools
@@ -23,39 +15,45 @@ ifndef GRPCPP_LIBS
 $(error gRPC++ could not be found via pkg-config, you need to install them)
 endif
 
-CXX := g++
+CXX := nvcc
 AS := nasm
-CXXFLAGS := -std=c++17 -I /usr/local/cuda/include -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS) #-Wfatal-errors
-LDFLAGS_GPU := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -liomp5 $(GRPCPP_LIBS)
-LDFLAGS := $(LDFLAGS_GPU) -fopenmp
+CXXFLAGS := -std=c++17 --expt-relaxed-constexpr -Xcompiler "-Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS)" #-Wfatal-errors
+LDFLAGS := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -liomp5 -lssl $(GRPCPP_LIBS)
 CXXFLAGS_W2DB := -std=c++17 -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2
 LDFLAGS_W2DB := -lgmp -lstdc++ -lgmpxx
-CFLAGS := -fopenmp
+CFLAGS := -Xcompiler -fopenmp
 ASFLAGS := -felf64
+
+# only for RTX4090
+CUDA_ARCH := -gencode arch=compute_89,code=sm_89
+# CUDA_ARCH :=-arch=native
+
+use_cuda ?= 1
 
 # Debug build flags
 ifeq ($(dbg),1)
       CXXFLAGS += -g -D DEBUG
 else
       CXXFLAGS += -O3
+	  ifeq ($(use_cuda),1)
+	  CXXFLAGS += -D__USE_CUDA__
+	  endif
 endif
 
-ifneq ($(avx512),0)
-ifeq ($(avx512),1)
-	CXXFLAGS += -mavx512f -D__AVX512__
-else
-# check if AVX-512 is supported
-AVX512_SUPPORTED := $(shell cat /proc/cpuinfo | grep -E 'avx512' -m 1)
-ifneq ($(AVX512_SUPPORTED),)
-	CXXFLAGS += -mavx512f -D__AVX512__
-endif
-endif
-endif
+#ifneq ($(avx512),0)
+#ifeq ($(avx512),1)
+#	CXXFLAGS += -mavx512f -D__AVX512__
+#else
+## check if AVX-512 is supported
+#AVX512_SUPPORTED := $(shell cat /proc/cpuinfo | grep -E 'avx512' -m 1)
+#ifneq ($(AVX512_SUPPORTED),)
+#	CXXFLAGS += -mavx512f -D__AVX512__
+#endif
+#endif
+#endif
 
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
-
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
 GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
@@ -63,58 +61,48 @@ GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
 INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(sort $(dir))
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-SRCS_ZKP := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
-SRCS_ZKP_GPU := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" ! -path "./src/goldilocks/utils/deviceQuery.cu" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
-
+SRCS_ZKP := $(shell find $(SRC_DIRS) ! -path "./src/test/*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/prover/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu)
 OBJS_ZKP := $(SRCS_ZKP:%=$(BUILD_DIR)/%.o)
-OBJS_ZKP_GPU := $(SRCS_ZKP_GPU:%=$(BUILD_DIR)/%.o)
 DEPS_ZKP := $(OBJS_ZKP:.o=.d)
 
-SRCS_BCT := $(shell find ./tools/starkpil/bctree/build_const_tree.cpp ./tools/starkpil/bctree/main.cpp ./src/goldilocks/src ./src/starkpil/merkleTree/merkleTreeBN128.cpp ./src/starkpil/merkleTree/merkleTreeGL.cpp ./src/poseidon_opt/poseidon_opt.cpp ./src/XKCP ./src/ffiasm ./src/starkpil/stark_info.* ./src/utils/* \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
+SRCS_BCT := $(shell find $(SRC_DIRS) ! -path "./src/test/*" ! -path "./src/main.cpp" ! -path "./test/prover/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu)
 OBJS_BCT := $(SRCS_BCT:%=$(BUILD_DIR)/%.o)
 DEPS_BCT := $(OBJS_BCT:.o=.d)
 
-SRCS_TEST := $(shell find ./test/examples/ ./src/XKCP ./src/goldilocks/src ./src/starkpil/stark_info.* ./src/starkpil/starks.* ./src/starkpil/chelpers.* ./src/rapidsnark/binfile_utils.* ./src/starkpil/steps.* ./src/starkpil/polinomial.hpp ./src/starkpil/merkleTree/merkleTreeGL.* ./src/starkpil/transcript/transcript.* ./src/starkpil/fri ./src/ffiasm ./src/utils ./tools/sm/sha256/sha256.cpp ./tools/sm/sha256/bcon/bcon_sha256.cpp ! -path "./src/starkpil/fri/friProveC12.*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
-SRCS_TEST_GPU := $(shell find ./test/examples/ ./src/XKCP ./src/goldilocks/src ./src/goldilocks/utils ./src/starkpil/stark_info.* ./src/starkpil/starks.* ./src/starkpil/chelpers.*  ./src/starkpil/chelpers_steps_gpu.cu  ./src/rapidsnark/binfile_utils.* ./src/starkpil/steps.* ./src/starkpil/polinomial.hpp ./src/starkpil/merkleTree/merkleTreeGL.* ./src/starkpil/transcript/transcript.* ./src/starkpil/fri ./src/ffiasm ./src/utils ./tools/sm/sha256/sha256.cpp ./tools/sm/sha256/bcon/bcon_sha256.cpp ! -path "./src/starkpil/fri/friProveC12.*" ! -path "./src/goldilocks/utils/deviceQuery.cu" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
+SRCS_TEST := $(shell find $(SRC_DIRS) ! -path "./src/test/*" ! -path "./src/main.cpp" ! -path "./tools/starkpil/bctree/*"  ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu)
 OBJS_TEST := $(SRCS_TEST:%=$(BUILD_DIR)/%.o)
-OBJS_TEST_GPU := $(SRCS_TEST_GPU:%=$(BUILD_DIR)/%.o)
 DEPS_TEST := $(OBJS_TEST:.o=.d)
 
-SRCS_W2DB := ./src/witness2db/witness2db.cpp  ./src/goldilocks/src/goldilocks_base_field.cpp ./src/goldilocks/src/poseidon_goldilocks.cpp
-OBJS_W2DB := $(SRCS_W2DB:%=$(BUILD_DIR)/%.o)
-DEPS_W2DB := $(OBJS_W2DB:.o=.d)
+ICICLE_DIR := ./depends/icicle/icicle
+ICICLE_BUILD_DIR := $(BUILD_DIR)/icicle
+ICICLE_LIB_DIRS := -L$(ICICLE_BUILD_DIR)/lib
+ICICLE_LIBS := -lingo_curve_bn254 -lingo_field_bn254
+ICICLE_INCLUDE_DIRS := -I./depends/icicle/icicle/include
 
-SRCS_EXPRESSIONS := $(shell find ./test/expressions/ ./src/XKCP ./src/goldilocks/src ./src/starkpil/stark_info.*  ./src/starkpil/chelpers.* ./src/rapidsnark/binfile_utils.*  ./src/starkpil/steps.* ./src/starkpil/polinomial.hpp ./src/ffiasm ./src/utils ! -path "./src/starkpil/fri/friProveC12.*"  \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
-OBJS_EXPRESSIONS := $(SRCS_EXPRESSIONS:%=$(BUILD_DIR)/%.o)
-DEPS_EXPRESSIONS := $(OBJS_EXPRESSIONS:.o=.d)
+GOLDILOCKS_DIR := src/goldilocks
+GOLDILOCKS_LIBS := -L$(BUILD_DIR) -lgl
+GOLDILOCKS_INCLUDE_DIRS := -I./src/goldilocks/include -I./src/goldilocks/utils
 
-SRCS_SETUP := $(shell find $(SETUP_DIRS) ! -path "./src/sm/*" ! -path "./src/main_sm/*" -name *.cpp)
-SRCS_SETUP += $(shell find src/XKCP -name *.cpp)
-SRCS_SETUP += $(shell find src/fflonk_setup -name fflonk_setup.cpp)
-SRCS_SETUP += $(shell find src/ffiasm/* -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc)
-OBJS_SETUP := $(patsubst %,$(BUILD_DIR)/%.o,$(SRCS_SETUP))
-OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main.cpp.o, $(OBJS_SETUP)) # Exclude main.cpp from test build
-OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main_test.cpp.o, $(OBJS_SETUP)) # Exclude main.cpp from test build
-DEPS_SETUP := $(OBJS_SETUP:.o=.d)
+CPPFLAGS ?= $(INC_FLAGS) $(GOLDILOCKS_INCLUDE_DIRS) -MMD -MP
 
-all: $(BUILD_DIR)/$(TARGET_ZKP_GPU)
+all: $(BUILD_DIR)/$(TARGET_ZKP)
 
-$(BUILD_DIR)/$(TARGET_ZKP_GPU): $(OBJS_ZKP_GPU)
-	$(NVCC) $(OBJS_ZKP_GPU) -O3 -o $@ $(LDFLAGS_GPU)
+goldilocks:
+	make -C $(GOLDILOCKS_DIR) libgl
+	mv $(GOLDILOCKS_DIR)/libgl.a $(BUILD_DIR)/
 
-# assembly
-$(BUILD_DIR)/%.asm.o: %.asm
-	$(MKDIR_P) $(dir $@)
-	$(AS) $(ASFLAGS) $< -o $@
+bctree: $(BUILD_DIR)/$(TARGET_BCT)
 
-# c++ source
-$(BUILD_DIR)/%.cpp.o: %.cpp
-	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+test: $(BUILD_DIR)/$(TARGET_TEST)
 
-$(BUILD_DIR)/%.cc.o: %.cc
-	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+$(BUILD_DIR)/$(TARGET_ZKP): goldilocks $(OBJS_ZKP)
+	$(CXX) $(CUDA_ARCH) $(OBJS_ZKP) -o $@ $(LDFLAGS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
+
+$(BUILD_DIR)/$(TARGET_BCT): $(OBJS_BCT)
+	$(CXX) $(CUDA_ARCH) $(OBJS_BCT) -o $@ $(LDFLAGS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
+
+$(BUILD_DIR)/$(TARGET_TEST): $(OBJS_TEST)
+	$(CXX) $(CUDA_ARCH) $(OBJS_TEST) -o $@ $(LDFLAGS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 # assembly
 $(BUILD_DIR)/%.asm.o: %.asm
@@ -124,16 +112,16 @@ $(BUILD_DIR)/%.asm.o: %.asm
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
-	$(CXX) -D__USE_CUDA__ $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) -D__USE_CUDA__ $(CUDA_ARCH) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.cc.o: %.cc
 	$(MKDIR_P) $(dir $@)
-	$(CXX) -D__USE_CUDA__ $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) -D__USE_CUDA__ $(CUDA_ARCH) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 # cuda source
 $(BUILD_DIR)/%.cu.o: %.cu
 	$(MKDIR_P) $(dir $@)
-	$(NVCC) -D__USE_CUDA__ $(INC_FLAGS) -Isrc/goldilocks/utils -Xcompiler -fopenmp -Xcompiler -fPIC -Xcompiler -mavx2 -Xcompiler -O3 $< -dc --output-file $@
+	$(CXX) -D__USE_CUDA__ $(CUDA_ARCH) --split-compile 0 $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 main_generator: $(BUILD_DIR)/$(TARGET_MNG)
 
@@ -152,16 +140,6 @@ pols_diff: $(BUILD_DIR)/$(TARGET_PLD)
 $(BUILD_DIR)/$(TARGET_PLD): ./src/pols_diff/pols_diff.cpp
 	$(MKDIR_P) $(BUILD_DIR)
 	g++ -g ./src/pols_diff/pols_diff.cpp ./src/config/fork_info.* $(CXXFLAGS) $(INC_FLAGS) -o $@ $(LDFLAGS)
-
-witness2db: $(BUILD_DIR)/$(TARGET_W2DB)
-
-$(BUILD_DIR)/$(TARGET_W2DB): $(OBJS_W2DB)
-	$(CXX) $(OBJS_W2DB) $(CXXFLAGS_W2DB) -o $@ $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS_W2DB) $(LDFLAGS_W2DB)
-
-fflonk_setup: $(BUILD_DIR)/$(TARGET_SETUP)
-
-$(BUILD_DIR)/$(TARGET_SETUP): $(OBJS_SETUP)
-	$(CXX) $(OBJS_SETUP) $(CXXFLAGS) $(LDFLAGS) -o $@
 
 .PHONY: clean
 
