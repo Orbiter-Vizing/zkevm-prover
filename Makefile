@@ -31,7 +31,7 @@ CUDA_ARCH :=-arch=native
 ifeq ($(dbg),1)
       CXXFLAGS += -g -D DEBUG
 else
-      CXXFLAGS += -O3 -D__USE_CUDA__
+      CXXFLAGS += -O3  -D__USE_CUDA__
 endif
 
 #ifneq ($(avx512),0)
@@ -56,11 +56,11 @@ GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
 INC_DIRS := $(shell find $(SRC_DIRS) -type d) $(sort $(dir))
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-SRCS_ZKP := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
+SRCS_ZKP := $(shell find $(SRC_DIRS) ! -path "./src/fflonk_setup/fflonk_setup*" ! -path "./tools/starkpil/bctree/*" ! -path "./test/examples/*" ! -path "./test/expressions/*" ! -path "./test/prover/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/benchs/*" ! -path "./src/goldilocks/tests/*" ! -path "./src/main_generator/*" ! -path "./src/pols_generator/*" ! -path "./src/pols_diff/*" ! -path "./src/witness2db/*" \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
 OBJS_ZKP := $(SRCS_ZKP:%=$(BUILD_DIR)/%.o)
 DEPS_ZKP := $(OBJS_ZKP:.o=.d)
 
-SRCS_BCT := $(shell find ./tools/starkpil/bctree/build_const_tree.cpp ./tools/starkpil/bctree/main.cpp ./src/goldilocks/src ./src/starkpil/merkleTree/merkleTreeBN128.cpp ./src/starkpil/merkleTree/merkleTreeGL.cpp ./src/poseidon_opt/poseidon_opt.cpp ./src/XKCP ./src/ffiasm ./src/starkpil/stark_info.* ./src/utils/* \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc \))
+SRCS_BCT := $(shell find ./tools/starkpil/bctree/build_const_tree.cpp ./tools/starkpil/bctree/main.cpp ./src/goldilocks/src ./src/starkpil/merkleTree/merkleTreeBN128.cpp ./src/starkpil/merkleTree/merkleTreeGL.cpp ./src/poseidon_opt/poseidon_opt.cpp ./src/XKCP ./src/ffiasm ./src/starkpil/stark_info.* ./src/utils/* \( -name *.cpp -or -name *.c -or -name *.asm -or -name *.cc -or -name *.cu \))
 OBJS_BCT := $(SRCS_BCT:%=$(BUILD_DIR)/%.o)
 DEPS_BCT := $(OBJS_BCT:.o=.d)
 
@@ -102,7 +102,7 @@ test: $(BUILD_DIR)/$(TARGET_TEST)
 
 expressions: ${BUILD_DIR}/$(TARGET_EXPRESSIONS)
 
-$(BUILD_DIR)/$(TARGET_ZKP): $(OBJS_ZKP)
+$(BUILD_DIR)/$(TARGET_ZKP): goldilocks $(OBJS_ZKP)
 	$(CXX) $(CUDA_ARCH) $(OBJS_ZKP) -o $@  $(ICICLE_LIB_DIRS) $(LDFLAGS) $(ICICLE_LIBS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(ICICLE_INCLUDE_DIRS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 $(BUILD_DIR)/$(TARGET_BCT): $(OBJS_BCT)
@@ -127,6 +127,10 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 $(BUILD_DIR)/%.cc.o: %.cc
 	$(MKDIR_P) $(dir $@)
 	$(CXX) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.cu.o: %.cu
+	$(MKDIR_P) $(dir $@)
+	$(CXX) $(CUDA_ARCH) --split-compile 0 $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(ICICLE_INCLUDE_DIRS) -c $< -o $@
 
 main_generator: $(BUILD_DIR)/$(TARGET_MNG)
 
