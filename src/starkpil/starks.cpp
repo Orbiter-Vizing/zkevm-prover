@@ -772,8 +772,14 @@ void Starks::merkelizeMemory()
     PoseidonGoldilocks::merkletree_avx512(treeDBG, (Goldilocks::Element *)pAddress, ncolsDGB,
                                           nrowsDGB);
 #else
+#ifdef __USE_CUDA__
+    zklog.info("merkletree_cuda ...");
+    PoseidonGoldilocks::merkletree_cuda(treeDBG, (Goldilocks::Element *)pAddress, ncolsDGB,
+                                          nrowsDGB);
+#else
     PoseidonGoldilocks::merkletree_avx(treeDBG, (Goldilocks::Element *)pAddress, ncolsDGB,
                                        nrowsDGB);
+#endif
 #endif
     MerklehashGoldilocks::root(&(rootDBG[0]), treeDBG, numElementsTreeDBG);
     std::cout << "rootDBG[0]: [ " << Goldilocks::toU64(rootDBG[0]) << " ]" << std::endl;

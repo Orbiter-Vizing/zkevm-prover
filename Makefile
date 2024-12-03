@@ -18,38 +18,37 @@ ifndef GRPCPP_LIBS
 $(error gRPC++ could not be found via pkg-config, you need to install them)
 endif
 
-CXX := g++
+CXX := nvcc
 AS := nasm
-CXXFLAGS := -std=c++17 -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS) #-Wfatal-errors
-LDFLAGS := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -fopenmp -liomp5 $(GRPCPP_LIBS)
-CXXFLAGS_W2DB := -std=c++17 -Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2
-LDFLAGS_W2DB := -lgmp -lstdc++ -lgmpxx
-CFLAGS := -fopenmp
+CXXFLAGS := -std=c++17 --expt-relaxed-constexpr -Xcompiler "-Wall -pthread -flarge-source-files -Wno-unused-label -rdynamic -mavx2 $(GRPCPP_FLAGS)" #-Wfatal-errors
+LDFLAGS := -lprotobuf -lsodium -lgpr -lpthread -lpqxx -lpq -lgmp -lstdc++ -lgmpxx -lsecp256k1 -lcrypto -luuid -liomp5 -lssl $(GRPCPP_LIBS)
+CFLAGS := -Xcompiler -fopenmp
 ASFLAGS := -felf64
+
+CUDA_ARCH :=-arch=native
 
 # Debug build flags
 ifeq ($(dbg),1)
       CXXFLAGS += -g -D DEBUG
 else
-      CXXFLAGS += -O3
+      CXXFLAGS += -O3 -D__USE_CUDA__
 endif
 
-ifneq ($(avx512),0)
-ifeq ($(avx512),1)
-	CXXFLAGS += -mavx512f -D__AVX512__
-else
-# check if AVX-512 is supported
-AVX512_SUPPORTED := $(shell cat /proc/cpuinfo | grep -E 'avx512' -m 1)
-ifneq ($(AVX512_SUPPORTED),)
-	CXXFLAGS += -mavx512f -D__AVX512__
-endif
-endif
-endif
+#ifneq ($(avx512),0)
+#ifeq ($(avx512),1)
+#	CXXFLAGS += -mavx512f -D__AVX512__
+#else
+## check if AVX-512 is supported
+#AVX512_SUPPORTED := $(shell cat /proc/cpuinfo | grep -E 'avx512' -m 1)
+#ifneq ($(AVX512_SUPPORTED),)
+#	CXXFLAGS += -mavx512f -D__AVX512__
+#endif
+#endif
+#endif
 
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
 GRPC_CPP_PLUGIN_PATH ?= `which $(GRPC_CPP_PLUGIN)`
@@ -86,7 +85,16 @@ OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main.cpp.o, $(OBJS_SETUP)) # Exclude
 OBJS_SETUP := $(filter-out $(BUILD_DIR)/src/main_test.cpp.o, $(OBJS_SETUP)) # Exclude main.cpp from test build
 DEPS_SETUP := $(OBJS_SETUP:.o=.d)
 
+GOLDILOCKS_DIR := ./depends/goldilocks-gpu
+GOLDILOCKS_LIBS := -L$(GOLDILOCKS_DIR) -lgl
+GOLDILOCKS_INCLUDE_DIRS := -I./depends/goldilocks-gpu/include -I./depends/goldilocks-gpu/utils
+
+CPPFLAGS ?= $(INC_FLAGS) $(GOLDILOCKS_INCLUDE_DIRS) -MMD -MP
+
 all: $(BUILD_DIR)/$(TARGET_ZKP)
+
+goldilocks:
+	make -C $(GOLDILOCKS_DIR) libgl
 
 bctree: $(BUILD_DIR)/$(TARGET_BCT)
 
@@ -95,16 +103,16 @@ test: $(BUILD_DIR)/$(TARGET_TEST)
 expressions: ${BUILD_DIR}/$(TARGET_EXPRESSIONS)
 
 $(BUILD_DIR)/$(TARGET_ZKP): $(OBJS_ZKP)
-	$(CXX) $(OBJS_ZKP) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) $(CUDA_ARCH) $(OBJS_ZKP) -o $@  $(ICICLE_LIB_DIRS) $(LDFLAGS) $(ICICLE_LIBS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(ICICLE_INCLUDE_DIRS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 $(BUILD_DIR)/$(TARGET_BCT): $(OBJS_BCT)
-	$(CXX) $(OBJS_BCT) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) $(CUDA_ARCH) $(OBJS_BCT) -o $@  $(ICICLE_LIB_DIRS) $(LDFLAGS) $(ICICLE_LIBS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(ICICLE_INCLUDE_DIRS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 $(BUILD_DIR)/$(TARGET_TEST): $(OBJS_TEST)
-	$(CXX) $(OBJS_TEST) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) $(CUDA_ARCH) $(OBJS_TEST)  -o $@  $(ICICLE_LIB_DIRS) $(LDFLAGS) $(ICICLE_LIBS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(ICICLE_INCLUDE_DIRS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 $(BUILD_DIR)/$(TARGET_EXPRESSIONS): $(OBJS_EXPRESSIONS)
-	$(CXX) $(OBJS_EXPRESSIONS) $(CXXFLAGS) -o $@ $(LDFLAGS) $(CFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) $(CUDA_ARCH) $(OBJS_EXPRESSIONS) -o $@  $(ICICLE_LIB_DIRS) $(LDFLAGS) $(ICICLE_LIBS) $(GOLDILOCKS_LIBS) $(CFLAGS) $(CPPFLAGS) $(ICICLE_INCLUDE_DIRS) $(GOLDILOCKS_INCLUDE_DIRS) $(CXXFLAGS)
 
 # assembly
 $(BUILD_DIR)/%.asm.o: %.asm
