@@ -1,6 +1,7 @@
 #include "polynomial.hpp"
 #include "thread_utils.hpp"
 #include "evaluations.hpp"
+#include "../../src/cuda/pinned_memory_manager.cuh"
 #include <math.h>
 #include "logger.hpp"
 
@@ -11,7 +12,8 @@ void Polynomial<Engine>::initialize(u_int64_t length, u_int64_t blindLength, boo
     this->createBuffer = createBuffer;
     u_int64_t totalLength = length + blindLength;
     if(createBuffer) {
-        coef = new FrElement[totalLength];
+        // coef = new FrElement[totalLength];
+        coef = alloc_pinned_memory(totalLength);
     }
 
     int nThreads = omp_get_max_threads() / 2;
@@ -65,7 +67,15 @@ Polynomial<Engine>::fromEvaluations(Engine &_E, FFT<typename Engine::Fr> *fft, F
     int nThreads = omp_get_max_threads() / 2;
     ThreadUtils::parcpy(pol->coef, evaluations, length * sizeof(FrElement), nThreads);
 
+#ifdef __USE_CUDA__
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    icicle_bn254_intt_cuda(pol->coef, length);
+  } else {
     fft->ifft(pol->coef, length);
+  }
+#else
+  fft->ifft(pol->coef, length);
+#endif
 
     pol->fixDegree();
 
@@ -80,7 +90,15 @@ Polynomial<Engine>::fromEvaluations(Engine &_E, FFT<typename Engine::Fr> *fft, F
     int nThreads = omp_get_max_threads() / 2;
     ThreadUtils::parcpy(pol->coef, evaluations, length * sizeof(FrElement), nThreads);
 
+#ifdef __USE_CUDA__
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    icicle_bn254_intt_cuda(pol->coef, length);
+  } else {
     fft->ifft(pol->coef, length);
+  }
+#else
+  fft->ifft(pol->coef, length);
+#endif
 
     pol->fixDegree();
 
@@ -90,7 +108,8 @@ Polynomial<Engine>::fromEvaluations(Engine &_E, FFT<typename Engine::Fr> *fft, F
 template<typename Engine>
 Polynomial<Engine>::~Polynomial() {
     if(this->createBuffer) {
-        delete[] this->coef;
+        // delete[] this->coef;
+        free_pinned_memory(this->coef);
     }
 }
 
@@ -211,7 +230,8 @@ void Polynomial<Engine>::add(Polynomial<Engine> &polynomial) {
     bool resize = polynomial.length > this->length;
 
     if (resize) {
-        newCoef = new FrElement[polynomial.length];
+        // newCoef = new FrElement[polynomial.length];
+        newCoef = alloc_pinned_memory(polynomial.length);
     }
 
     u_int64_t thisLength = this->length;
@@ -232,7 +252,8 @@ void Polynomial<Engine>::add(Polynomial<Engine> &polynomial) {
     }
 
     if (resize) {
-        if(createBuffer) delete[] this->coef;
+        if(createBuffer) free_pinned_memory(this->coef);
+        //delete[] this->coef;
         this->coef = newCoef;
     }
 
@@ -296,7 +317,8 @@ void Polynomial<Engine>::byXSubValue(FrElement &value) {
     pol->add(*this);
 
     // Swap buffers
-    if(this->createBuffer) delete[] this->coef;
+    if(this->createBuffer) free_pinned_memory(this->coef);
+    // delete[] this->coef;
     this->coef = pol->coef;
 
     fixDegree();
@@ -322,7 +344,8 @@ void Polynomial<Engine>::byXNSubValue(int n, FrElement &value) {
     pol->add(*this);
 
     // Swap buffers
-    if(this->createBuffer) delete[] this->coef;
+    if(this->createBuffer) free_pinned_memory(this->coef);
+    //delete[] this->coef;
     this->coef = pol->coef;
     delete pol;
 
@@ -360,7 +383,8 @@ void Polynomial<Engine>::divByMonic(uint32_t m, FrElement beta) {
     u_int64_t d = this->degree;
 
     Polynomial<Engine> *polResult = new Polynomial<Engine>(this->E, this->length);
-    FrElement *bArr = new FrElement[m];
+    // FrElement *bArr = new FrElement[m];
+    FrElement *bArr = alloc_pinned_memory(m);
 
     for (uint32_t i = 0; i < m; i++) {
         polResult->coef[(d - i) - m] = this->coef[d - i];
@@ -380,11 +404,13 @@ void Polynomial<Engine>::divByMonic(uint32_t m, FrElement beta) {
 
     // Swap buffers
     if(createBuffer) {
-        delete[] this->coef;
+        // delete[] this->coef;
+        free_pinned_memory(this->coef);
     }
     this->coef = polResult->coef;
 
     fixDegree();
+    free_pinned_memory(bArr);
 }
 
 template<typename Engine>
@@ -660,7 +686,8 @@ void Polynomial<Engine>::byX() {
     int nThreads = omp_get_max_threads() / 2;
 
     if (resize) {
-        FrElement *newCoef = new FrElement[this->length + 1];
+        // FrElement *newCoef = new FrElement[this->length + 1];
+        FrElement *newCoef = alloc_pinned_memory(this->length + 1);
         ThreadUtils::parcpy(newCoef[1], coef[0], sizeof(coef), nThreads);
         coef = newCoef;
     } else {

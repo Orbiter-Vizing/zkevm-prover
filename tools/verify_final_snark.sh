@@ -1,0 +1,1 @@
+snarkjs ffv config/final/final.fflonk.verkey.json $(ls -t runtime//output/*.gen_final_proof_public.json | head -n1) $(ls -t runtime//output/*.final_proof.proof.json | head -n1)

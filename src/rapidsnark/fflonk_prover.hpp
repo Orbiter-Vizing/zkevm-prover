@@ -148,7 +148,7 @@ namespace Fflonk {
 
         void computeZTS2();
 
-        void batchInverse(FrElement *elements, u_int64_t length);
+        void batchInverse(FrElement *elements, u_int64_t length, bool omp_for = false);
 
         FrElement *polynomialFromMontgomery(Polynomial<Engine> *polynomial);
 

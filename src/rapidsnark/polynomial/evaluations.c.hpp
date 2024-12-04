@@ -1,12 +1,15 @@
 #include "evaluations.hpp"
 #include "thread_utils.hpp"
-
+#include "../../src/cuda/bn254_fft_msm.hpp"
+#include "../../src/cuda/pinned_memory_manager.cuh"
+#include <omp.h>
 
 template<typename Engine>
 void Evaluations<Engine>::initialize(u_int64_t length, bool createBuffer) {
     this->createBuffer = createBuffer;
     if(createBuffer) {
-        eval = new FrElement[length];
+        // eval = new FrElement[length];
+        eval = alloc_pinned_memory(length);
     }
     int nThreads = omp_get_max_threads() / 2;
     ThreadUtils::parset(eval, 0, length * sizeof(FrElement), nThreads);
@@ -44,8 +47,16 @@ Evaluations<Engine>::Evaluations(Engine &_E, FFT<typename Engine::Fr> *fft, Poly
     int nThreads = omp_get_max_threads() / 2;
     ThreadUtils::parcpy(eval, polynomial.coef, (polynomial.getDegree() + 1) * sizeof(FrElement), nThreads);
 
-    //Coefficients to evaluations
+#ifdef __USE_CUDA__
+  // Coefficients to evaluations
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    icicle_bn254_ntt_cuda(eval, extensionLength);
+  } else {
     fft->fft(eval, extensionLength);
+  }
+#else
+  fft->fft(eval, extensionLength);
+#endif
 }
 
 template<typename Engine>
@@ -56,13 +67,23 @@ Evaluations<Engine>::Evaluations(Engine &_E, FFT<typename Engine::Fr> *fft, FrEl
     int nThreads = omp_get_max_threads() / 2;
     ThreadUtils::parcpy(eval, polynomial.coef, (polynomial.getDegree() + 1) * sizeof(FrElement), nThreads);
 
+#ifdef __USE_CUDA__
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    icicle_bn254_ntt_cuda(eval, extensionLength);
+  } else {
     fft->fft(eval, extensionLength);
+  }
+
+#else
+  fft->fft(eval, extensionLength);
+#endif
 }
 
 template<typename Engine>
 Evaluations<Engine>::~Evaluations() {
     if(createBuffer) {
-        delete[] this->eval;
+        // delete[] this->eval;
+        free_pinned_memory(this->eval);
     }
 }
 

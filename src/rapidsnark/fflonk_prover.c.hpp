@@ -4,10 +4,12 @@
 #include "zkey_fflonk.hpp"
 #include "wtns_utils.hpp"
 #include <sodium.h>
+#include <sys/types.h>
 #include "thread_utils.hpp"
 #include "polynomial/cpolynomial.hpp"
 #include "zklog.hpp"
 #include "exit_process.hpp"
+#include "../../src/cuda/pinned_memory_manager.cuh"
 
 #define ELPP_NO_DEFAULT_LOG_FILE
 #include "logger.hpp"
@@ -55,16 +57,21 @@ namespace Fflonk
         if(NULL == reservedMemoryPtr) {
             delete[] inverses;
             delete[] products;
-            delete[] buffInternalWitness;
-            delete[] nonPrecomputedBigBuffer;
-            delete[] additionsFactor1;
-            delete[] additionsFactor2;
+            // delete[] buffInternalWitness;
+            free_pinned_memory(buffInternalWitness);
+            // delete[] nonPrecomputedBigBuffer;
+            free_pinned_memory(nonPrecomputedBigBuffer);
+            // delete[] additionsFactor1;
+            // delete[] additionsFactor2;
+            free_pinned_memory(additionsFactor1);
+            free_pinned_memory(additionsFactor2);
             delete[] mapBuffersBigBuffer;
             delete[] additionsSignalId1;
             delete[] additionsSignalId2;
         } else {
             if(!useReservedMemoryForPrecomputedBuffer) {
-                delete[] precomputedBigBuffer;
+                // delete[] precomputedBigBuffer;
+                free_pinned_memory(precomputedBigBuffer);
             }
         }
 
@@ -165,7 +172,8 @@ namespace Fflonk
                     precomputedBigBuffer = reservedMemoryPtr;
                 }
             } else {
-                precomputedBigBuffer = new FrElement[lengthPrecomputedBigBuffer];
+                // precomputedBigBuffer = new FrElement[lengthPrecomputedBigBuffer];
+                precomputedBigBuffer = alloc_pinned_memory(lengthPrecomputedBigBuffer);
             }
 
             polPtr["Sigma1"] = &precomputedBigBuffer[0];
@@ -349,7 +357,8 @@ namespace Fflonk
             lengthNonPrecomputedBigBuffer += buffersLength;
 
             if(NULL == this->reservedMemoryPtr) {
-                nonPrecomputedBigBuffer = new FrElement[lengthNonPrecomputedBigBuffer];
+                // nonPrecomputedBigBuffer = new FrElement[lengthNonPrecomputedBigBuffer];
+                nonPrecomputedBigBuffer = alloc_pinned_memory(lengthNonPrecomputedBigBuffer);
             } else {
                 uint64_t totalLength = lengthAdditionalBuffer + lengthNonPrecomputedBigBuffer;
 
@@ -410,9 +419,12 @@ namespace Fflonk
             if(NULL == this->reservedMemoryPtr) {
                 inverses = new FrElement[zkey->domainSize];
                 products = new FrElement[zkey->domainSize];
-                buffInternalWitness = new FrElement[zkey->nAdditions];
-                additionsFactor1 = new FrElement[zkey->nAdditions];
-                additionsFactor2 = new FrElement[zkey->nAdditions];
+                // buffInternalWitness = new FrElement[zkey->nAdditions];
+                // additionsFactor1 = new FrElement[zkey->nAdditions];
+                // additionsFactor2 = new FrElement[zkey->nAdditions];
+                buffInternalWitness = alloc_pinned_memory(zkey->nAdditions);
+                additionsFactor1 = alloc_pinned_memory(zkey->nAdditions);
+                additionsFactor2 = alloc_pinned_memory(zkey->nAdditions);
                 additionsSignalId1 = new u_int32_t[zkey->nAdditions];
                 additionsSignalId2 = new u_int32_t[zkey->nAdditions];
                 mapBuffersBigBuffer = new u_int32_t[zkey->nConstraints * 3];
@@ -420,6 +432,13 @@ namespace Fflonk
                 inverses = this->reservedMemoryPtr;
                 if(useReservedMemoryForPrecomputedBuffer) inverses = inverses + lengthPrecomputedBigBuffer;
                 products = inverses + zkey->domainSize;
+                // if don't use products and inverses
+                // if(useReservedMemoryForPrecomputedBuffer) {
+                //     buffInternalWitness = this->reservedMemoryPtr +lengthPrecomputedBigBuffer + zkey->domainSize;
+                // }else {
+                //     buffInternalWitness = this->reservedMemoryPtr + zkey->domainSize;
+                // }
+
                 buffInternalWitness = products + zkey->domainSize;
                 additionsFactor1 = buffInternalWitness + zkey->nAdditions;
                 additionsFactor2 = additionsFactor1 + zkey->nAdditions;
@@ -614,7 +633,6 @@ namespace Fflonk
             // Prepare public inputs
             json publicSignals;
             FrElement montgomery;
-            printf("zkey.nPublic: %d\n", zkey->nPublic);
             for (u_int32_t i = 1; i <= zkey->nPublic; i++)
             {
                 E.fr.toMontgomery(montgomery, buffWitness[i]);
@@ -1006,7 +1024,7 @@ namespace Fflonk
 
         // Compute the inverse of denArr to compute in the next command the
         // division numArr/denArr by multiplying num · 1/denArr
-        batchInverse(denArr, zkey->domainSize);
+        batchInverse(denArr, zkey->domainSize, true);
 
         // Multiply numArr · denArr where denArr was inverted in the previous command
         #pragma omp parallel for
@@ -1604,26 +1622,33 @@ namespace Fflonk
     }
 
     template <typename Engine>
-    void FflonkProver<Engine>::batchInverse(FrElement *elements, u_int64_t length)
+    void FflonkProver<Engine>::batchInverse(FrElement *elements, u_int64_t length, bool omp_for)
     {
-        // Calculate products: a, ab, abc, abcd, ...
-        products[0] = elements[0];
-        for (u_int64_t index = 1; index < length; index++)
-        {
-            E.fr.mul(products[index], products[index - 1], elements[index]);
-        }
+        if (omp_for){
+            #pragma omp parallel for
+            for (u_int64_t index = 0; index < length; index++){
+                E.fr.inv(elements[index], elements[index]);
+            }
+        }else {
+            // Calculate products: a, ab, abc, abcd, ...
+            products[0] = elements[0];
+            for (u_int64_t index = 1; index < length; index++)
+            {
+                E.fr.mul(products[index], products[index - 1], elements[index]);
+            }
 
-        // Calculate inverses: 1/a, 1/ab, 1/abc, 1/abcd, ...
-        E.fr.inv(inverses[length - 1], products[length - 1]);
-        for (uint64_t index = length - 1; index > 0; index--)
-        {
-            E.fr.mul(inverses[index - 1], inverses[index], elements[index]);
-        }
+            // Calculate inverses: 1/a, 1/ab, 1/abc, 1/abcd, ...
+            E.fr.inv(inverses[length - 1], products[length - 1]);
+            for (uint64_t index = length - 1; index > 0; index--)
+            {
+                E.fr.mul(inverses[index - 1], inverses[index], elements[index]);
+            }
 
-        elements[0] = inverses[0];
-        for (u_int64_t index = 1; index < length; index++)
-        {
-            E.fr.mul(elements[index], inverses[index], products[index - 1]);
+            elements[0] = inverses[0];
+            for (u_int64_t index = 1; index < length; index++)
+            {
+                E.fr.mul(elements[index], inverses[index], products[index - 1]);
+            }
         }
     }
 
@@ -1764,10 +1789,22 @@ namespace Fflonk
     typename Engine::G1Point FflonkProver<Engine>::multiExponentiation(Polynomial<Engine> *polynomial)
     {
         G1Point value;
-        FrElement *pol = this->polynomialFromMontgomery(polynomial);
+#ifdef __USE_CUDA__
 
-        E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]), polynomial->getDegree() + 1);
-
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    FrElement *pol = polynomial->coef;
+    icicle_bn254_msm_cuda(value, PTau, (uint8_t *)pol,
+                          polynomial->getDegree() + 1);
+  } else {
+    FrElement *pol = this->polynomialFromMontgomery(polynomial);
+    E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]),
+                          polynomial->getDegree() + 1);
+  }
+#else
+  FrElement *pol = this->polynomialFromMontgomery(polynomial);
+  E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]),
+                        polynomial->getDegree() + 1);
+#endif
         return value;
     }
 
@@ -1776,10 +1813,22 @@ namespace Fflonk
     FflonkProver<Engine>::multiExponentiation(Polynomial<Engine> *polynomial, u_int32_t nx, u_int64_t x[])
     {
         G1Point value;
-        FrElement *pol = this->polynomialFromMontgomery(polynomial);
+#ifdef __USE_CUDA__
 
-        E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]), polynomial->getDegree() + 1, nx, x);
-
+  if constexpr (std::is_same<Engine, AltBn128::Engine>::value) {
+    FrElement *pol = polynomial->coef;
+    icicle_bn254_msm_cuda(value, PTau, (uint8_t *)pol,
+                          polynomial->getDegree() + 1);
+  } else {
+    FrElement *pol = this->polynomialFromMontgomery(polynomial);
+    E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]),
+                          polynomial->getDegree() + 1, nx, x);
+  }
+#else
+  FrElement *pol = this->polynomialFromMontgomery(polynomial);
+  E.g1.multiMulByScalar(value, PTau, (uint8_t *)pol, sizeof(pol[0]),
+                        polynomial->getDegree() + 1, nx, x);
+#endif
         return value;
     }
 }
