@@ -961,7 +961,7 @@ void Prover::genFinalProof(ProverRequest *pProverRequest)
     json publicJson;
     AltBn128::FrElement aux;
     AltBn128::Fr.toMontgomery(aux, pWitnessFinal[1]);
-    publicJson[0] = AltBn128::Fr.toString(aux);
+    publicJson[0] = std::string(AltBn128::Fr.toString(aux));
     if (config.saveOutputPublicToFile) {
         json2file(publicJson, pProverRequest->publicsOutputFile());
     }

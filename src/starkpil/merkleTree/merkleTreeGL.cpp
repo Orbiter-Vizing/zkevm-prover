@@ -40,8 +40,8 @@ void MerkleTreeGL::merkelize()
     PoseidonGoldilocks::merkletree_avx512(nodes, source, width, height);
 #else
 #ifdef __USE_CUDA__
-    printf("merkletreeGL_cuds ......\n");
-        PoseidonGoldilocks::merkletree_cuda(nodes, source, width, height);
+    printf("merkletreeGL_cuda ......\n");
+    PoseidonGoldilocks::merkletree_cuda(nodes, source, width, height);
 #else
     PoseidonGoldilocks::merkletree_avx(nodes, source, width, height);
 #endif

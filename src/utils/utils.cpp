@@ -233,9 +233,10 @@ void json2file(const json &j, const string &fileName)
         zklog.error("json2file() failed creating output JSON file " + fileName);
         exitProcess();
     }
-    outputStream << setw(4) << j << endl;
+    outputStream << j.dump(4) << endl;
     outputStream.close();
 }
+
 
 void file2json(const string &fileName, json &j)
 {

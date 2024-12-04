@@ -614,6 +614,7 @@ namespace Fflonk
             // Prepare public inputs
             json publicSignals;
             FrElement montgomery;
+            printf("zkey.nPublic: %d\n", zkey->nPublic);
             for (u_int32_t i = 1; i <= zkey->nPublic; i++)
             {
                 E.fr.toMontgomery(montgomery, buffWitness[i]);
