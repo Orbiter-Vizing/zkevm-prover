@@ -59,7 +59,7 @@ static void init_ntt_msm_config() {
           1,       // precompute_factor
           0,       // c
           0,       // bitsize
-          15,      // large_bucket_factor
+          10,      // large_bucket_factor
           1,       // batch_size
           false,   // are_scalars_on_device
           true,    // are_scalars_montgomery_form

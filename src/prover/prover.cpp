@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iomanip>
+#include <string>
 #include <unistd.h>
 #include "prover.hpp"
 #include "utils.hpp"
@@ -953,6 +954,17 @@ void Prover::genFinalProof(ProverRequest *pProverRequest)
     CircomFinal::getBinWitness(ctxFinal, pWitnessFinal, witnessSizeFinal);
     CircomFinal::freeCircuit(circuitFinal);
     delete ctxFinal;
+
+    json witnessJson;
+    std::cout << "witnessSizeFinal: " << witnessSizeFinal << std::endl;
+    if(config.saveWitnessToFile){
+        for (size_t i =0; i< witnessSizeFinal; i++){
+            AltBn128::FrElement aux;
+            AltBn128::Fr.toMontgomery(aux, pWitnessFinal[i]);
+            witnessJson[i] = std::string(AltBn128::Fr.toString(aux));
+        }
+        json2file(witnessJson, pProverRequest->filePrefix + "witness.json");
+    }
 
     TimerStopAndLog(CIRCOM_GET_BIN_WITNESS_FINAL);
 

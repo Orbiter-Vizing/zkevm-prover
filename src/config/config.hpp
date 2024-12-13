@@ -58,6 +58,7 @@ public:
     bool saveDbReadsToFileOnChange; // Same as saveDbReadsToFile, but saving the file at every read (slow, but useful if executor crashes)
     bool saveOutputToFile; // Saves the grpc output data, in json format
     bool saveOutputPublicToFile; // Saves the grpc output data, in json format
+    bool saveWitnessToFile; // Saves witness data, in json format
     bool saveProofToFile; // Saves the proof, in json format
     bool saveResponseToFile; // Saves the grpc service response, in text format
     bool saveFilesInSubfolders; // Saves output files in folders per hour, e.g. output/2023/01/10/18

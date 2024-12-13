@@ -24,6 +24,7 @@ namespace Fflonk
         this->reservedMemoryPtr = (FrElement *)reservedMemoryPtr;
         this->reservedMemorySize = reservedMemorySize;
         this->useReservedMemoryForPrecomputedBuffer = useReservedMemoryForPrecomputedBuffer;
+        zkey_has_set = false;
 
         curveName = CurveUtils::getCurveNameByEngine();
 
@@ -120,7 +121,12 @@ namespace Fflonk
     }
 
     template<typename Engine>
-    void FflonkProver<Engine>::setZkey(BinFileUtils::BinFile *fdZkey) {
+    void FflonkProver<Engine>::setZkey(BinFileUtils::BinFile *fdZkey, bool always_same_zkey) {
+        if (zkey_has_set && always_same_zkey) {
+            LOG_TRACE("ZKEY ALREADY HAS SET");
+            return ;
+        }
+        
         try
         {
             std::ostringstream ss;
@@ -480,6 +486,7 @@ namespace Fflonk
             ThreadUtils::parcpy(mapBuffers["C"],
                                 (FrElement *)fdZkey->getSectionData(Zkey::ZKEY_FF_C_MAP_SECTION),
                                 sizeof(u_int32_t) * zkey->nConstraints, nThreads);
+            zkey_has_set = true;
         }
         catch (const std::exception &e)
         {

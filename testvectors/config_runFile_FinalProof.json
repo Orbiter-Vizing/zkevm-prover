@@ -32,6 +32,7 @@
     "saveDbReadsToFileOnChange": false,
     "saveOutputToFile": true,
     "saveProofToFile": true,
+    "saveWitnessToFile": false,
     "saveOutputPublicToFile": true,
     "saveResponseToFile": false,
     "loadDBToMemCache": true,

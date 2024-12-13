@@ -79,13 +79,15 @@ namespace Fflonk {
 
         Keccak256Transcript<Engine> *transcript;
         SnarkProof<Engine> *proof;
+
+        bool zkey_has_set;
     public:
         FflonkProver(Engine &E);
         FflonkProver(Engine &E, void* reservedMemoryPtr, uint64_t reservedMemorySize, bool useReservedMemoryForPrecomputedBuffer = false);
 
         ~FflonkProver();
 
-        void setZkey(BinFileUtils::BinFile *fdZkey);
+        void setZkey(BinFileUtils::BinFile *fdZkey, bool always_same_zkey = true);
 
         uint64_t getLengthPrecomputedBuffer(uint64_t domainSize, uint64_t nPublics);
 
