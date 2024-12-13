@@ -8,9 +8,9 @@
 #include "goldilocks_base_field.hpp"
 //#include "goldilocks_base_field_avx.hpp"
 //#include "goldilocks_base_field_avx512.hpp"
-//#include "goldilocks_base_field_pack.hpp"
+#include "goldilocks_base_field_pack.hpp"
 #include "goldilocks_cubic_extension.hpp"
-//#include "goldilocks_cubic_extension_pack.hpp"
+#include "goldilocks_cubic_extension_pack.hpp"
 #include "goldilocks_cubic_extension_avx.hpp"
 #include "goldilocks_cubic_extension_avx512.hpp"
 

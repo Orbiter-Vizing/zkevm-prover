@@ -31,7 +31,7 @@ CUDA_ARCH :=-arch=native
 ifeq ($(dbg),1)
       CXXFLAGS += -g -D DEBUG
 else
-      CXXFLAGS += -O3  -D__USE_CUDA__
+      CXXFLAGS += -O3  -D__USE_CUDA__ -DENABLE_EXPERIMENTAL_CODE
 endif
 
 #ifneq ($(avx512),0)

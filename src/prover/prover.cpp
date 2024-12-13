@@ -32,6 +32,8 @@
 #include "zklog.hpp"
 #include "exit_process.hpp"
 #include "chelpers_steps_pack.hpp"
+#include "chelpers_steps_gpu.hpp"
+
 #ifdef __AVX512__
 #include "chelpers_steps_avx512.hpp"
 #endif
